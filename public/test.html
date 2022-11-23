@@ -1,0 +1,231 @@
+<style>
+    #chart-wrapper {
+      display: inline-block;
+      position: relative;
+      width: 800px;
+      height: 300px;
+    }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="/js/bootstrap-datepicker.js"></script>
+  <link href="css/styles.css" rel="stylesheet" />
+  <link href="/css/datepicker.css" rel="stylesheet" type="text/css" />
+  <select id="option_county">
+    <option value="" selected="selected">Select County</option>
+</select>
+
+<select id="option_city">
+    <option value="" selected="selected">Select City</option>
+</select>
+<div class="btn-group btn-group-toggle" data-toggle="buttons">
+    <label class="btn btn-secondary active">
+      <input type="radio" name="frequency" onclick="frequency_change(this);" value="daily" id="option1" autocomplete="off" checked> Daily
+    </label>
+    <label class="btn btn-secondary">
+      <input type="radio" name="frequency" onclick="frequency_change(this);" value="monthly" id="option2" autocomplete="off"> Monthly
+    </label>
+    <label class="btn btn-secondary">
+      <input type="radio" name="frequency" onclick="frequency_change(this);" value="yearly" id="option3" autocomplete="off"> Yearly
+    </label>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+        <th>Start: <input type="text" class="span2" id="dpd1" value="2001-01-01"></th>
+        <th>End: <input type="text" class="span2" value="2001-01-31" id="dpd2"></th>
+        </tr>
+    </thead>
+</table>
+<div id="chart-wrapper">
+    <canvas id="chart"></canvas>
+  </div>
+  
+
+  <script>
+
+    var nowTemp = new Date();
+    var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+    
+    var minDate = new Date("2001-01-01");
+    var maxDate = new Date("2021-06-03");
+
+    var startDate = $('#dpd1').datepicker({
+        format: "yyyy-mm-dd",
+        onRender: function(date) {
+            return (date.valueOf() > maxDate.valueOf() || date.valueOf() < minDate.valueOf())  ? 'disabled' : '';
+        }
+    }).on('changeDate', function(ev) {
+        if (ev.date.valueOf() > endDate.date.valueOf()) {
+            var newDate = new Date(ev.date)
+            newDate.setDate(newDate.getDate() + 1);
+            endDate.setValue(newDate);
+        }
+        startDate.hide();
+        $('#dpd2')[0].focus();
+    }).data('datepicker');
+
+    var endDate = $('#dpd2').datepicker({
+        format: "yyyy-mm-dd",
+        onRender: function(date) {
+            let endMaxDate = new Date($('#dpd1').val());
+            endMaxDate.setMonth(endMaxDate.getMonth() +1);
+            endMaxDate.setDate(endMaxDate.getDate() -1);
+            return (date.valueOf() <= startDate.valueOf() || date.valueOf() > endMaxDate.valueOf() || date.valueOf() > maxDate.valueOf()) ? 'disabled' : '';
+        }
+    }).on('changeDate', function(ev) {
+        endDate.hide();
+        if (parseInt(option_city.value) >= 0 && parseInt(option_county.value) >=0) {
+            var checked_frequency = document.querySelector('input[name = "frequency"]:checked');
+            var url = "/collisions?frequency="+checked_frequency.value
+                +"&county_id="+parseInt(option_county.value)
+                +'&city_id='+parseInt(option_city.value)
+                +'&start='+$('#dpd1').val()
+                +'&end='+$('#dpd2').val()
+            loadChart(url);
+        }
+    }).data('datepicker');
+
+    const ctx = document.getElementById('chart');
+    var cities;
+    var chart;
+
+    function frequency_change(radio_btn) {
+        var checked_frequency = document.querySelector('input[name = "frequency"]:checked');
+        const frequencyToWords = {
+            'daily': 0,
+            'monthly': 1,
+            'yearly': 2
+        }
+        console.log('new mode: ', frequencyToWords[checked_frequency.value]);
+        $('#dpd1').datepicker({
+            viewMode: frequencyToWords[checked_frequency.value],
+            minViewMode: frequencyToWords[checked_frequency.value],
+        });
+
+
+        
+        var url = "/collisions?frequency="+checked_frequency.value
+            +"&county_id="+parseInt(option_county.value)
+            +'&city_id='+parseInt(option_city.value)
+            +'&start='+$('#dpd1').val()
+            +'&end='+$('#dpd2').val()
+        loadChart(url);
+    }
+
+    function loadChart(url) {
+        fetch(url).then(function(response) {
+            return response.json();
+        }).then(function(data) {
+            if (data.success) {
+                const d = data.payload;
+                var dataset = [];
+                var injured_dataset = [];
+                var killed_dataset = [];
+                var current_date = new Date($('#dpd1').val());
+                var end_date = new Date($('#dpd2').val());
+                for (var i=0;i<d.length;i++) {
+
+                    var collision_date = d[i].collision_date.substring(0, 10);
+                    while(current_date.toISOString().substring(0, 10) != collision_date) {
+                        dataset.push({x:current_date.toISOString().substring(0, 10), y:0});
+                        injured_dataset.push({x:current_date.toISOString().substring(0, 10), y:0});
+                        killed_dataset.push({x:current_date.toISOString().substring(0, 10), y:0});
+                        current_date.setDate(current_date.getDate()+1);
+                        if (current_date.toISOString().substring(0, 10) == collision_date) {
+                            break;
+                        }
+                    } 
+
+                    dataset.push({x:d[i].collision_date.substring(0, 10), y:d[i].num_accidents});
+                    injured_dataset.push({x:d[i].collision_date.substring(0, 10), y:d[i].total_injured});
+                    killed_dataset.push({x:d[i].collision_date.substring(0, 10), y:d[i].total_killed});
+                    current_date.setDate(current_date.getDate()+1);
+                }
+                current_date.setDate(current_date.getDate()-1);
+                while(current_date.toISOString().substring(0, 10) != end_date.toISOString().substring(0, 10)) {
+                    dataset.push({x:current_date.toISOString().substring(0, 10), y:0});
+                    injured_dataset.push({x:current_date.toISOString().substring(0, 10), y:0});
+                    killed_dataset.push({x:current_date.toISOString().substring(0, 10), y:0});
+                    current_date.setDate(current_date.getDate()+1);
+                } 
+                console.log('dataset', dataset);
+                if (chart) chart.destroy();
+                chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        // labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                        datasets: [{
+                            label: '# of Accidents',
+                            data: dataset,
+                            borderWidth: 1
+                        },
+                        {
+                            label: '# of Injured',
+                            data: injured_dataset,
+                            borderWidth: 1,
+                        },{
+                            label: '# of Killed',
+                            data: killed_dataset,
+                            borderWidth: 1,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            },
+                            x: {
+                                min: $('#dpd1').val(),
+                            }
+                        }
+                    }
+                });
+            }
+        }).catch(function(err) {
+            console.log("Booo", err);
+        });
+    }
+    
+    window.onload = function() {
+        const option_county = document.getElementById('option_county');
+        const option_city = document.getElementById('option_city');
+
+        fetch("/city_compact.json").then(function(response) {
+            return response.json();
+        }).then(function(data) {
+            var counties = data.items.filter(option=> option.city_ID == 'All');
+            cities = data.items.filter(option=> option.city_ID != 'All');
+            for(var i=0;i<counties.length;i++) {
+                option_county.options[option_county.options.length] = new Option(counties[i].county, counties[i].county_ID);
+            }
+        }).catch(function(err) {
+            console.log("Booo", err);
+        });
+        option_county.onchange = function() {
+            //empty cities dropdowns
+            option_city.length = 1;
+            //display correct values
+            var select_cities = cities.filter(option=> option.county_ID == this.value);
+            for(var i=0;i<select_cities.length;i++) {
+                option_city.options[option_city.options.length] = new Option(select_cities[i].city, select_cities[i].city_ID);
+            }
+        }
+        option_city.onchange = function() {
+            var checked_frequency = document.querySelector('input[name = "frequency"]:checked');
+            var url = "/collisions?frequency="+checked_frequency.value
+                +"&county_id="+parseInt(option_county.value)
+                +'&city_id='+parseInt(this.value)
+                +'&start='+$('#dpd1').val()
+                +'&end='+$('#dpd2').val()
+            loadChart(url);
+        }
+    }
+    
+
+    
+  </script>
+
