@@ -1,6 +1,8 @@
 const express = require('express')
 var config = require("./config.js");
 const mysql = require("mysql2");
+const fs = require("fs");
+const https = require("https");
 const app = express()
 const port = 3000
 
@@ -27,7 +29,20 @@ app.get("/collisions", (req, res) => {
   });
 });
 
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+if (config.SSL.ENABLED) {
+  var privateKey = fs.readFileSync(config.SSL.KEYPATH);
+  var certificate = fs.readFileSync(config.SSL.CERTPATH);
+  https
+    .createServer(
+      {
+        key: privateKey,
+        cert: certificate,
+      },
+      app
+    )
+    .listen(443);
+} else {
+  app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`)
+  })
+}
