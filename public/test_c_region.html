@@ -1,0 +1,197 @@
+<style>
+    #chart-wrapper {
+      display: inline-block;
+      position: relative;
+      width: 800px;
+      height: 500px;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="/js/bootstrap-datepicker.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0/chartjs-plugin-datalabels.min.js" integrity="sha512-R/QOHLpV1Ggq22vfDAWYOaMd5RopHrJNMxi8/lJu8Oihwi4Ho4BRFeiMiCefn9rasajKjnx9/fTQ/xkWnkDACg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<link href="css/styles.css" rel="stylesheet" />
+<link href="/css/datepicker.css" rel="stylesheet" type="text/css" />
+
+<div>
+    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+    <select id="option_feature">
+        <option value="" selected="selected">Select Category</option>
+        <option value="pcf_violation_category">PCF Violation Category</option>
+        <option value="day_or_night">test</option>
+    </select>
+    </div>
+</div>
+<div>
+    <select class="option_county" id="county_1">
+        <option value="" selected="selected">Select County</option>
+    </select>
+    
+    <select class="option_city county_1" id="city_1">
+        <option value="" selected="selected">Select City</option>
+    </select>
+
+    <select class="option_county" id="county_2">
+        <option value="" selected="selected">Select County</option>
+    </select>
+    
+    <select class="option_city county_2" id="city_2">
+        <option value="" selected="selected">Select City</option>
+    </select>
+
+    <select id="option_category_val">
+        <option value="" selected="selected">Select Value</option>
+    </select>
+</div>
+
+
+
+<div id="chart-wrapper">
+    <canvas id="my-chart"></canvas>
+</div>
+  
+
+
+<script>
+const ctx = document.getElementById('my-chart');
+const feature = document.getElementById("option_feature");
+
+var labels;
+var chart;
+var dataset_data;
+var lineChartData=
+{
+    type: 'bar',
+    data:{
+        datasets: []
+}};
+var selected_cities = {};
+
+function init_data(){
+  dataset_data = [];
+  labels = [];
+}
+
+function reset_dataset(curr_city){
+    console.log(curr_city)
+    lineChartData.data.datasets[curr_city] = {}
+}
+
+
+function loadData(url, curr_city) {
+  fetch(url).then(function(response) {
+      return response.json();
+  }).then(function(data) {
+      if (data.success) {
+        init_data()
+        dataset_data[curr_city] = []
+        data = data.payload;
+        let keys = Object.keys(data[0]);
+        curr_feature = keys[0];
+        for(i in data){
+            d = data[i];
+            feature_val = d[curr_feature];
+            percent = d["percent"];
+            collisions = d["num_collisions"];
+            year = d['year'];
+            if((labels.indexOf(year) === -1)){
+                labels.push(year);
+            }
+            if(!dataset_data[curr_city][feature_val]) dataset_data[curr_city][feature_val] = []
+            dataset_data[curr_city][feature_val].push({x:year, y:collisions})
+
+        }
+        labels.sort()
+        lineChartData.labels = labels;
+        lineChartData.data.labels = labels;
+        category_values = Object.keys(dataset_data[curr_city])
+        for (i in category_values){
+            $("#option_category_val").append(new Option(category_values[i]));
+        }
+      }
+  })
+}
+
+
+function get_dataset(){
+    // reset_dataset(curr_city);
+    curr_cat_val = $("#option_category_val")[0].value;
+    curr_city = $(".option_city")[0].value
+    console.log(dataset_data)
+    lineChartData.data.datasets.push({
+        label: curr_city,
+        data: dataset_data[curr_city][curr_cat_val]
+    })
+    // features = Object.keys(dataset_data[curr_city][curr_cat_val])
+    // console.log(features)
+    // console.log(dataset_data[curr_city])
+    // features = curr_cat_val;
+    // for (var i in features){
+    //     lineChartData.data.datasets.push({
+    //         label: features[i],
+    //         data: dataset_data[curr_city][features[i]]
+    //     })
+    // }
+    // console.log(lineChartData)
+}
+
+function plotStack(){
+    if (chart) chart.destroy();
+    get_dataset();
+    // console.log(curr_city)
+    // console.log(dataset_data)
+    console.log(lineChartData)
+    chart = new Chart(ctx, lineChartData
+    )
+}
+
+
+
+
+window.onload = function() {
+    fetch("/city_compact.json").then(function(response) {
+        return response.json();
+    }).then(function(data) {
+        var counties = data.items.filter(option=> option.city_ID == 'All');
+        cities = data.items.filter(option=> option.city_ID != 'All');
+        for(var i=0;i<counties.length;i++) {
+            $(".option_county").each(function(){
+                $(this).append(new Option(counties[i].county, counties[i].county_ID));
+            })
+        }
+    }).catch(function(err) {
+        console.log("Booo", err);
+    });
+    $(".option_county").change(function() {
+        var select_cities = cities.filter(option=> option.county_ID == this.value);
+        var changed_id = $(this).attr("id");
+        $("."+changed_id).empty();
+        for(var i=0;i<select_cities.length;i++) {
+            $("."+changed_id).append(new Option(select_cities[i].city, select_cities[i].city_ID));
+        }      
+    });
+
+    $(".option_city").change(function(){
+        var city_class = $(this).attr("class").split(' ')[1];
+        var curr_county = parseInt($("#"+city_class)[0].value);
+        var curr_city = parseInt(this.value);
+        var url = "/categoryRegion?category_name="+feature.value+
+        "&county_id=" + curr_county + "&city_id=" + curr_city;
+        loadData(url, curr_city);  
+        
+    })
+    $("#option_category_val").change(function(){
+            plotStack();
+    })
+
+
+    
+
+}
+
+
+
+</script>
+

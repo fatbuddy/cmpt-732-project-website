@@ -1,0 +1,278 @@
+<style>
+    #chart-wrapper {
+      display: inline-block;
+      position: relative;
+      width: 800px;
+      height: 500px;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="/js/bootstrap-datepicker.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0/chartjs-plugin-datalabels.min.js" integrity="sha512-R/QOHLpV1Ggq22vfDAWYOaMd5RopHrJNMxi8/lJu8Oihwi4Ho4BRFeiMiCefn9rasajKjnx9/fTQ/xkWnkDACg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<link href="css/styles.css" rel="stylesheet" />
+<link href="/css/datepicker.css" rel="stylesheet" type="text/css" />
+
+<div>
+  <div class="btn-group btn-group-toggle" data-toggle="buttons">
+    <select id="option_feature">
+      <option value="" selected="selected">Select Category</option>
+      <option value="day_of_week">Day of Week</option>
+      <option value="day_or_night">Day or Night</option>
+    </select>
+  </div>
+</div>
+<div>
+<div class="tab">
+  <button class="tablinks" onclick="plotPie()">Pie</button>
+  <button class="tablinks" onclick="plotStack()">Stack</button>
+  <button class="tablinks" onclick="plotPercentStack()">Percent Stack</button>
+</div>
+
+</div>
+
+<div id="chart-wrapper">
+  <canvas id="my-chart"></canvas>
+</div>
+
+
+<script>
+const ctx = document.getElementById('my-chart');
+var labels;
+var chart;
+var dataset_label = ["other injury", "fatal", "severe injury", "pain", "property damage only"];
+var dataset_data;
+var dataset_data_percent;
+var data_size;
+var day_label = ['Sun','Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+function init_data(){
+  dataset_data = [];
+  dataset_data_percent = [];
+  dataset_total = [];
+  labels = [];
+  data_size = 0;
+}
+
+
+function loadData(url) {
+  fetch(url).then(function(response) {
+      return response.json();
+  }).then(function(data) {
+      if (data.success) {
+        init_data();
+        data = data.payload;
+        let keys = Object.keys(data[0]);
+        feature = keys[0];
+        for(i in data){
+          d = data[i];
+          feature_val = d[feature];
+          severity = d["collision_severity"];
+          percent = d["percent"];
+          collisions = d["num_collisions"];
+          var index = -1;
+          // place the label in the right position
+          if (day_label.includes(feature_val)){
+            index = day_label.indexOf(feature_val);
+            if (index !== -1 & (labels.indexOf(feature_val) === -1) ){
+              labels[index] = (feature_val);
+            }
+          }
+          else if( (labels.indexOf(feature_val) === -1)){
+            labels.push(feature_val);
+          }
+          
+          
+          if(!dataset_data[severity]) dataset_data[severity] = []
+          dataset_data[severity].push(collisions)
+          if(!dataset_data_percent[severity]) dataset_data_percent[severity] = []
+          dataset_data_percent[severity].push(percent)
+          if(!dataset_total[feature_val]) dataset_total[feature_val] = 0
+          dataset_total[feature_val] += collisions;
+          
+        }
+        // set bar width
+        data_size = labels.length;
+
+      }
+      plotPie();
+    })
+}
+
+function plotStack(){
+  if (chart) chart.destroy();
+  // document.getElementById("chart-wrapper").style.width = data_size * 100;
+  chart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [{
+        label: "property damage only",
+        backgroundColor: "#00429d",
+        data: dataset_data["property damage only"],
+      },{
+        label: "pain",
+        backgroundColor: "#4771b2",
+        data: dataset_data["pain"],
+      },{
+        label: "other injury",
+        backgroundColor: "#a5d5d8",
+        data: dataset_data["other injury"],
+      },{
+        label: "severe injury",
+        backgroundColor: "#cf3759",
+        data: dataset_data["severe injury"],
+      },{
+        label: "fatal",
+        backgroundColor: "#93003a",
+        data: dataset_data["fatal"],
+      }],
+    },
+    options: {
+      plugins: {
+        title: {
+          display: true,
+          text: 'Chart.js Bar Chart - Stacked'
+        },
+      },
+      responsive: true,
+      scales: {
+        x: {
+          stacked: true,
+        },
+        y: {
+          stacked: true
+        }
+      },
+      categoryPercentage: data_size/5,
+      barPercentage: 0.5
+}
+});
+
+}
+  
+
+
+var pie_options = {
+  plugins: {
+    title: {
+      display: true,
+      text: 'Pie Chart'
+    },
+    legend: {
+        position: "top",
+        align: "start"
+    },
+    tooltips: {
+      enabled: false
+      },
+      datalabels: {
+        formatter: (value, context) => {
+            let sum = 0;
+            let dataArr = context.chart.data.datasets[0].data;
+            dataArr.map(data => {
+                sum += data;
+            });
+            let percentage = (value*100 / sum).toFixed(2)+"%";
+            return percentage;          
+    },
+    align: 'end',
+    anchor: 'end',
+    
+  }
+},
+  layout: {
+        padding: {
+            left: 50,
+            right: 50,
+            top: 50,
+            bottom: 50
+        }
+    }
+};
+
+
+function plotPie(){
+  if (chart) chart.destroy();
+  var dataset_total_lst = Object.values(dataset_total);
+  const reducer = (accumulator, currentValue) => accumulator + currentValue;
+  var total = dataset_total_lst.reduce(reducer);
+  // document.getElementById("chart-wrapper").style.width = 800;
+  
+  chart = new Chart(ctx, {
+    type: "doughnut",
+    data: {
+      labels: labels,
+      datasets: [{
+        data: dataset_total_lst
+      }],
+    },
+    options:pie_options,
+    plugins:[ChartDataLabels]      
+}); 
+}
+  
+function plotPercentStack(){
+if (chart) chart.destroy();
+  chart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [{
+        label: "property damage only",
+        backgroundColor: "#374c80",
+        data: dataset_data_percent["property damage only"],
+      },{
+        label: "pain",
+        backgroundColor: "#7a5195",
+        data: dataset_data_percent["pain"],
+      },{
+        label: "other injury",
+        backgroundColor: "#bc5090",
+        data: dataset_data_percent["other injury"],
+      },{
+        label: "severe injury",
+        backgroundColor: "#ef5675",
+        data: dataset_data_percent["severe injury"],
+      },{
+        label: "fatal",
+        backgroundColor: "#93003a",
+        data: dataset_data_percent["fatal"],
+      }]
+    },
+    options: {
+      plugins: {
+        title: {
+          display: true,
+          text: 'Chart.js Bar Chart - Stacked'
+        },
+      },
+      responsive: true,
+      scales: {
+        x: {
+          stacked: true,
+        },
+        y: {
+          stacked: true
+        }
+      },
+      categoryPercentage: data_size/5,
+      barPercentage: 0.5
+}
+}); 
+}
+
+window.onload = function(){
+  const feature = document.getElementById('option_feature');
+  feature.onchange = function(){
+    var url = "/categories?category_name="+feature.value;
+    loadData(url);  
+  }
+
+  
+}
+
+    
+  </script>
+
