@@ -1,8 +1,8 @@
-const CategoryRegion = function(categories) {
+const CategoryRegionTime = function(categories) {
 };
 
 
-CategoryRegion.findAll = (db, category_name, county_id, city_id, result) => {
+CategoryRegionTime.findAll = (db, category_name, county_id, city_id, result) => {
     const table_name = category_name + "_time_location";
     var query = "SELECT * FROM "+table_name
     + " WHERE ";
@@ -37,4 +37,4 @@ CategoryRegion.findAll = (db, category_name, county_id, city_id, result) => {
   }
 
 
-  module.exports = CategoryRegion;
+  module.exports = CategoryRegionTime;

@@ -70,13 +70,18 @@ var category_values;
 var lineChartData;
 var stackChartData;
 var selected_cities = {};
-var data_labels;
+
 function init_data(){
   dataset_data = {};
-  data_labels = [];
+//   data_labels = [];
   category_values = [];
-  data_labels = [];
+//   data_labels = [];
 }
+function generateArray (start, end) {
+    return Array.from(new Array(end + 1).keys()).slice(start)
+}
+var data_labels = generateArray(2001,2021);
+
 
 function reset_dataset(){
     lineChartData=
@@ -120,8 +125,7 @@ function loadData(url) {
   }).then(function(data) {
       if (data.success) {
         init_data();
-        data = data.payload;
-        // console.log(data)        
+        data = data.payload;    
         let keys = Object.keys(data[0]);
         curr_feature = keys[0];
         for(i in data){
@@ -137,9 +141,6 @@ function loadData(url) {
             }
             if(city.length == 1){
                 city = "0" + city;
-            }
-            if((data_labels.indexOf(year) === -1)){
-                data_labels.push(year);
             }
             county_city = "" + county + city;
             if(!dataset_data[county_city]) dataset_data[county_city] = {}
@@ -168,13 +169,18 @@ function get_dataset(chart_type){
             if(labels["county_1"][key]){
                 city_name = labels["county_1"][key];
             }
-            // if((key in Object.keys(labels["county_1"]))){
-            //     city_name = labels["county_1"][key];
-            // }
             else{
                 city_name = labels["county_2"][key];
             }
+            var all_data = value[selected_cat_val];
+            var all_years = all_data.map(a => a['x'])
 
+            for(i in data_labels){
+                if (all_years.indexOf(data_labels[i]) === -1){
+                    all_data.push({x:data_labels[i],y:0})
+                }
+            }
+            all_data.sort((a,b) => (a['x'] > b['x']) ? 1 : ((b['x'] > a['x']) ? -1 : 0))
             lineChartData.data.datasets.push({
                 label: city_name,
                 data: value[selected_cat_val]
@@ -190,9 +196,6 @@ function get_dataset(chart_type){
             if(labels["county_1"][key]){
                 city_name = labels["county_1"][key];
             }
-            // if((key in Object.keys(labels["county_1"]))){
-            //     city_name = labels["county_1"][key];
-            // }
             else{
                 city_name = labels["county_2"][key];
             }
@@ -272,10 +275,7 @@ window.onload = function() {
             var keys = Object.values(labels).map(a => Object.keys(a))
             var cities = keys.map(a => a[0].substring(2,4))
             var counties = keys.map(a => a[0].substring(0,2))
-            // var cities = Object.values(labels).map(a => a.substring(2,4));
-            // var counties = Object.values(labels).map(a => a[0].substring(0,2));
-            // console.log(cities)
-            var url = "/categoryRegion?category_name="+feature.value+
+            var url = "/categoryRegionTime?category_name="+feature.value+
                 "&county_id=" + counties + "&city_id=" + cities;
             loadData(url); 
         }
