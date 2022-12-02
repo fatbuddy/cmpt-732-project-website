@@ -4,10 +4,19 @@ const CategoryRegion = function(categories) {
 
 CategoryRegion.findAll = (db, category_name, county_id, city_id, result) => {
     const table_name = category_name + "_time_location";
-    const query = "SELECT * FROM "+table_name
-    + " WHERE county_ID=" + county_id + " and city_ID=" + city_id +
-    " ORDER BY year "
-    console.log(query);
+    var query = "SELECT * FROM "+table_name
+    + " WHERE ";
+    var county_id_lst = county_id.split(',')
+    var city_id_lst = city_id.split(',')
+    for(i in county_id_lst){
+        query += " county_ID=" + county_id_lst[i] + " and city_ID=" + city_id_lst[i];
+        if(i!=1){
+            query += " or ";
+        }
+    }
+
+    query +=" ORDER BY year "
+    console.log(query)
 
     db.execute(query, (err, res) => {
         if (err) {
