@@ -2,230 +2,575 @@
     #chart-wrapper {
       display: inline-block;
       position: relative;
-      width: 800px;
-      height: 300px;
+      width: 100%;
+      /* width: 1024px; */
+      /* height: 400px; */
+    }
+
+    .hide {
+        display: none;
     }
   </style>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
-  <script src="/js/bootstrap-datepicker.js"></script>
-  <link href="css/styles.css" rel="stylesheet" />
-  <link href="/css/datepicker.css" rel="stylesheet" type="text/css" />
-  <select id="option_county">
-    <option value="" selected="selected">Select County</option>
-</select>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="/js/bootstrap-datepicker.js"></script>
+<link href="css/styles.css" rel="stylesheet" />
+<link href="/css/datepicker.css" rel="stylesheet" type="text/css" />
+<body id="page-top">
+    <div class="container">
+        <div class="row mt-3 pb-3" style="border-bottom: 1px solid #ced4da;">
+            <div class="col col-7 col-select">
+                <div class="row mb-2">
+                    <div class="col col-6">
+                        <select id="option_county" class="form-select option_county" data-index="1">
+                            <option value="" selected="selected">Select County</option>
+                        </select>
+                    </div>
+                    <div class="col col-6">
+                        <select id="option_city" class="form-select option_city" data-index="1">
+                            <option value="-1" selected="selected">Select City</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col col-6">
+                        <select id="option_county" class="form-select option_county" data-index="2">
+                            <option value="" selected="selected">Select County</option>
+                        </select>
+                    </div>
+                    <div class="col col-6">
+                        <select id="option_city" class="form-select option_city" data-index="2">
+                            <option value="-1" selected="selected">Select City</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col col-6">
+                        <select id="option_county" class="form-select option_county" data-index="3">
+                            <option value="" selected="selected">Select County</option>
+                        </select>
+                    </div>
+                    <div class="col col-6">
+                        <select id="option_city" class="form-select option_city" data-index="3">
+                            <option value="-1" selected="selected">Select City</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col col-interval col-datepicker">
+                
+                <div class="rangepicker rangepicker-date">
+                    <div class="input-group mb-2">
+                        <span class="input-group-text" id="inputGroup-sizing-default">Start</span>
+                        <input type="text" class="form-control" id="dpd1" value="2001-01-01">
+                    </div>
+                    <div class="input-group mb-2">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="padding-right: 18px;">End</span>
+                        <input type="text" class="form-control" id="dpd2" value="2001-04-30">
+                    </div>
+                </div>
+                <div class="rangepicker rangepicker-month hide">
+                    <div class="input-group mb-2">
+                        <span class="input-group-text" id="inputGroup-sizing-default">Start</span>
+                        <input type="text" class="form-control" id="dpm1" value="2001-01-01">
+                    </div>
+                    <div class="input-group mb-2">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="padding-right: 18px;">End</span>
+                        <input type="text" class="form-control" id="dpm2" value="2003-12-31">
+                    </div>
+                </div>
+                <div class="rangepicker rangepicker-year hide">
+                    <div class="input-group mb-2">
+                        <span class="input-group-text" id="inputGroup-sizing-default">Start</span>
+                        <input type="text" class="form-control" id="dpy1" value="2001-01-01">
+                    </div>
+                    <div class="input-group mb-2">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="padding-right: 18px;">End</span>
+                        <input type="text" class="form-control" id="dpy2" value="2016-12-31">
+                    </div>
+                </div>
+                <div class="row btn-group btn-group-toggle" data-toggle="buttons">
+                    <div class="col col-12">
+                        <label class="btn btn-secondary active">
+                            <input type="radio" name="frequency" data-target="rangepicker-date" onclick="frequency_change(this);" value="daily" id="option1" autocomplete="off" checked> Daily
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="frequency" data-target="rangepicker-month" onclick="frequency_change(this);" value="monthly" id="option2" autocomplete="off"> Monthly
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="frequency" data-target="rangepicker-year" onclick="frequency_change(this);" value="yearly" id="option3" autocomplete="off"> Yearly
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<select id="option_city">
-    <option value="" selected="selected">Select City</option>
-</select>
-<div class="btn-group btn-group-toggle" data-toggle="buttons">
-    <label class="btn btn-secondary active">
-      <input type="radio" name="frequency" onclick="frequency_change(this);" value="daily" id="option1" autocomplete="off" checked> Daily
-    </label>
-    <label class="btn btn-secondary">
-      <input type="radio" name="frequency" onclick="frequency_change(this);" value="monthly" id="option2" autocomplete="off"> Monthly
-    </label>
-    <label class="btn btn-secondary">
-      <input type="radio" name="frequency" onclick="frequency_change(this);" value="yearly" id="option3" autocomplete="off"> Yearly
-    </label>
-</div>
-
-<table class="table">
-    <thead>
-        <tr>
-        <th>Start: <input type="text" class="span2" id="dpd1" value="2001-01-01"></th>
-        <th>End: <input type="text" class="span2" value="2001-01-31" id="dpd2"></th>
-        </tr>
-    </thead>
-</table>
-<div id="chart-wrapper">
-    <canvas id="chart"></canvas>
-  </div>
-  
-
-  <script>
-
-    var nowTemp = new Date();
-    var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
-    
-    var minDate = new Date("2001-01-01");
-    var maxDate = new Date("2021-06-03");
-
-    var startDate = $('#dpd1').datepicker({
-        format: "yyyy-mm-dd",
-        onRender: function(date) {
-            return (date.valueOf() > maxDate.valueOf() || date.valueOf() < minDate.valueOf())  ? 'disabled' : '';
-        }
-    }).on('changeDate', function(ev) {
-        if (ev.date.valueOf() > endDate.date.valueOf()) {
-            var newDate = new Date(ev.date)
-            newDate.setDate(newDate.getDate() + 1);
-            endDate.setValue(newDate);
-        }
-        startDate.hide();
-        $('#dpd2')[0].focus();
-    }).data('datepicker');
-
-    var endDate = $('#dpd2').datepicker({
-        format: "yyyy-mm-dd",
-        onRender: function(date) {
-            let endMaxDate = new Date($('#dpd1').val());
-            endMaxDate.setMonth(endMaxDate.getMonth() +1);
-            endMaxDate.setDate(endMaxDate.getDate() -1);
-            return (date.valueOf() <= startDate.valueOf() || date.valueOf() > endMaxDate.valueOf() || date.valueOf() > maxDate.valueOf()) ? 'disabled' : '';
-        }
-    }).on('changeDate', function(ev) {
-        endDate.hide();
-        if (parseInt(option_city.value) >= 0 && parseInt(option_county.value) >=0) {
-            var checked_frequency = document.querySelector('input[name = "frequency"]:checked');
-            var url = "/collisions?frequency="+checked_frequency.value
-                +"&county_id="+parseInt(option_county.value)
-                +'&city_id='+parseInt(option_city.value)
-                +'&start='+$('#dpd1').val()
-                +'&end='+$('#dpd2').val()
-            loadChart(url);
-        }
-    }).data('datepicker');
-
-    const ctx = document.getElementById('chart');
-    var cities;
-    var chart;
-
-    function frequency_change(radio_btn) {
-        var checked_frequency = document.querySelector('input[name = "frequency"]:checked');
-        const frequencyToWords = {
-            'daily': 0,
-            'monthly': 1,
-            'yearly': 2
-        }
-        console.log('new mode: ', frequencyToWords[checked_frequency.value]);
-        $('#dpd1').datepicker({
-            viewMode: frequencyToWords[checked_frequency.value],
-            minViewMode: frequencyToWords[checked_frequency.value],
-        });
-
-
+        <div class="container text-center">
+            <div id="chart-wrapper" class="mt-3">
+                <canvas id="chart1"></canvas>
+            </div>
+            <div id="chart-wrapper" class="mt-3">
+                 <canvas id="chart2"></canvas>
+            </div>
+            <div id="chart-wrapper" class="mt-3">
+               <canvas id="chart3"></canvas>
+            </div>
+        </div>
         
-        var url = "/collisions?frequency="+checked_frequency.value
-            +"&county_id="+parseInt(option_county.value)
-            +'&city_id='+parseInt(option_city.value)
-            +'&start='+$('#dpd1').val()
-            +'&end='+$('#dpd2').val()
-        loadChart(url);
-    }
-
-    function loadChart(url) {
-        fetch(url).then(function(response) {
-            return response.json();
-        }).then(function(data) {
-            if (data.success) {
-                const d = data.payload;
-                var dataset = [];
-                var injured_dataset = [];
-                var killed_dataset = [];
-                var current_date = new Date($('#dpd1').val());
-                var end_date = new Date($('#dpd2').val());
-                for (var i=0;i<d.length;i++) {
-
-                    var collision_date = d[i].collision_date.substring(0, 10);
-                    while(current_date.toISOString().substring(0, 10) != collision_date) {
-                        dataset.push({x:current_date.toISOString().substring(0, 10), y:0});
-                        injured_dataset.push({x:current_date.toISOString().substring(0, 10), y:0});
-                        killed_dataset.push({x:current_date.toISOString().substring(0, 10), y:0});
-                        current_date.setDate(current_date.getDate()+1);
-                        if (current_date.toISOString().substring(0, 10) == collision_date) {
-                            break;
-                        }
-                    } 
-
-                    dataset.push({x:d[i].collision_date.substring(0, 10), y:d[i].num_accidents});
-                    injured_dataset.push({x:d[i].collision_date.substring(0, 10), y:d[i].total_injured});
-                    killed_dataset.push({x:d[i].collision_date.substring(0, 10), y:d[i].total_killed});
-                    current_date.setDate(current_date.getDate()+1);
+        
+          <script>
+        
+            const colorLine = ['#003f5c', '#bc5090', '#ffa600']
+            const bgColorLine = ['#416E8E', '#D898BA', '#A27E52']
+            var nowTemp = new Date();
+            var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+            
+            var minDate = new Date("2001-01-01");
+            var maxDate = new Date("2021-06-03");
+        
+            var startDate = $('#dpd1').datepicker({
+                format: "yyyy-mm-dd",
+                onRender: function(date) {
+                    return (date.valueOf() > maxDate.valueOf() || date.valueOf() < minDate.valueOf())  ? 'disabled' : '';
                 }
-                current_date.setDate(current_date.getDate()-1);
-                while(current_date.toISOString().substring(0, 10) != end_date.toISOString().substring(0, 10)) {
-                    dataset.push({x:current_date.toISOString().substring(0, 10), y:0});
-                    injured_dataset.push({x:current_date.toISOString().substring(0, 10), y:0});
-                    killed_dataset.push({x:current_date.toISOString().substring(0, 10), y:0});
-                    current_date.setDate(current_date.getDate()+1);
-                } 
-                console.log('dataset', dataset);
-                if (chart) chart.destroy();
-                chart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        // labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                        datasets: [{
-                            label: '# of Accidents',
+            }).on('changeDate', function(ev) {
+                if (ev.date.valueOf() > endDate.date.valueOf()) {
+                    var newDate = new Date(ev.date)
+                    newDate.setDate(newDate.getDate() + 1);
+                    endDate.setValue(newDate);
+                }
+                startDate.hide();
+                $('#dpd2')[0].focus();
+            }).data('datepicker');
+        
+            var endDate = $('#dpd2').datepicker({
+                format: "yyyy-mm-dd",
+                onRender: function(date) {
+                    let endMaxDate = new Date($('#dpd1').val());
+                    endMaxDate.setMonth(endMaxDate.getMonth() +1);
+                    endMaxDate.setDate(endMaxDate.getDate() -1);
+                    return (date.valueOf() <= startDate.valueOf() || date.valueOf() > endMaxDate.valueOf() || date.valueOf() > maxDate.valueOf()) ? 'disabled' : '';
+                }
+            }).on('changeDate', function(ev) {
+                endDate.hide();
+                updateAllChart();
+            }).data('datepicker');
+        
+            var startMonth = $('#dpm1').datepicker({
+                viewMode: 1,
+                minViewMode: 1,
+                format: "yyyy-mm-dd",
+                onRender: function(date) {
+                    return (date.valueOf() > maxDate.valueOf() || date.valueOf() < minDate.valueOf())  ? 'disabled' : '';
+                }
+            }).on('changeDate', function(ev) {
+                if (ev.date.valueOf() > endMonth.date.valueOf()) {
+                    console.log('greater??');
+                    var newDate = new Date(ev.date)
+                    newDate.setDate(newDate.getDate() + 1);
+                    endMonth.setValue(newDate);
+                }
+                $('#dpm1').val(ev.date.toISOString().substring(0,10));
+                startMonth.hide();
+                $('#dpm2')[0].focus();
+            }).data('datepicker');
+        
+            var endMonth = $('#dpm2').datepicker({
+                viewMode: 1,
+                minViewMode: 1,
+                format: "yyyy-mm-dd",
+                onRender: function(date) {
+                    let endMaxDate = new Date($('#dpm1').val());
+                    endMaxDate.setFullYear(endMaxDate.getFullYear() +1);
+                    endMaxDate.setDate(endMaxDate.getDate() -1);
+                    return (date.valueOf() <= startMonth.valueOf() || date.valueOf() > endMaxDate.valueOf() || date.valueOf() > maxDate.valueOf()) ? 'disabled' : '';
+                }
+            }).on('changeDate', function(ev) {
+                $('#dpm2').val(ev.date.toISOString().substring(0,10));
+                endMonth.hide();
+                updateAllChart();
+            }).data('datepicker');
+        
+            var startYear = $('#dpy1').datepicker({
+                viewMode: 2,
+                minViewMode: 2,
+                format: "yyyy-mm-dd",
+                onRender: function(date) {
+                    return (date.valueOf() > maxDate.valueOf() || date.valueOf() < minDate.valueOf())  ? 'disabled' : '';
+                }
+            }).on('changeDate', function(ev) {
+                if (ev.date.valueOf() > endYear.date.valueOf()) {
+                    var newDate = new Date(ev.date)
+                    newDate.setDate(newDate.getDate() + 1);
+                    endYear.setValue(newDate);
+                }
+                $('#dpy1').val(ev.date.toISOString().substring(0,4));
+                startYear.hide();
+                $('#dpy2')[0].focus();
+            }).on('hide', function(ev){
+                $('#dpy1').val($('#dpy1').val().substring(0,4))
+            }).data('datepicker');
+        
+            var endYear = $('#dpy2').datepicker({
+                viewMode: 2,
+                minViewMode: 2,
+                format: "yyyy-mm-dd",
+                onRender: function(date) {
+                    let endMaxDate = new Date($('#dpy1').val());
+                    endMaxDate.setMonth(endMaxDate.getMonth() +1);
+                    endMaxDate.setDate(endMaxDate.getDate() -1);
+                    return (date.valueOf() <= startYear.valueOf() || date.valueOf() > endMaxDate.valueOf() || date.valueOf() > maxDate.valueOf()) ? 'disabled' : '';
+                }
+            }).on('changeDate', function(ev) {
+                endYear.hide();
+                $('#dpy2').val(ev.date.toISOString().substring(0,4));
+                updateAllChart();
+            }).on('hide', function(ev){
+                $('#dpy2').val($('#dpy2').val().substring(0,4))
+            }).data('datepicker');
+        
+            const ctx1 = document.getElementById('chart1');
+            const ctx2 = document.getElementById('chart2');
+            const ctx3 = document.getElementById('chart3');
+            var cities;
+            var chart1;
+            var chart2;
+            var chart3;
+        
+            function updateAllChart() {
+                if (chart1) {
+                    chart1.destroy()
+                    chart2.destroy()
+                    chart3.destroy()
+                    chart1 = undefined;
+                    chart2 = undefined;
+                    chart3 = undefined;
+                }
+                
+                for(var i=0;i<$('.option_county').length;i++) {
+                    updateChart(i+1);
+                }
+            }
+        
+            // index 1: startDate index 2: EndDate
+            function getDateValue(frequency, index) {
+                if (frequency == 'yearly') {
+                    return $('#dpy'+index).val().substring(0,4)
+                } else if (frequency == 'monthly') {
+                    return $('#dpm'+index).val()
+                } else {
+                    return $('#dpd'+index).val()
+                }
+            }
+        
+            function updateChart(index) {
+                var checked_frequency = document.querySelector('input[name = "frequency"]:checked');
+                var target_county = $('.option_county[data-index='+index+']').eq(0);
+                var target_city = $('.option_city[data-index='+index+']').eq(0);
+                var url = "/collisions?frequency="+checked_frequency.value
+                    +"&county_id="+parseInt(target_county.val())
+                    +'&city_id='+parseInt(target_city.val())
+                    +'&start='+getDateValue(checked_frequency.value, 1)
+                    +'&end='+getDateValue(checked_frequency.value, 2)
+                if (target_city.val() != -1) {
+                    loadChart(url, index);
+                }
+                
+            }
+        
+            function frequency_change(radio_btn) {
+                console.log('target:', $(radio_btn).attr('data-target'))
+                $('.rangepicker').addClass('hide');
+                $('.'+$(radio_btn).attr('data-target')).removeClass('hide');
+                var checked_frequency = document.querySelector('input[name = "frequency"]:checked');
+                const frequencyToWords = {
+                    'daily': 0,
+                    'monthly': 1,
+                    'yearly': 2
+                }
+                console.log('new mode: ', frequencyToWords[checked_frequency.value]);
+                $('#dpd1').datepicker({
+                    viewMode: frequencyToWords[checked_frequency.value],
+                    minViewMode: frequencyToWords[checked_frequency.value],
+                });
+                updateAllChart();
+            }
+        
+            function drawChart(chart, target_element, index, title_name, borderColor, dataset) {
+                
+                if (chart != undefined) {
+                    // check if the index is greater than what we have
+                    const data_length = chart.data.datasets.length;
+                    console.log('drawing...', index, data_length);
+                    if (index > data_length) {
+                        //append it
+                        chart.data.datasets.push({
+                            label: $('.option_county[data-index='+index+'] option:selected').eq(0).text()+' - '+$('.option_city[data-index='+index+'] option:selected').eq(0).text(),
                             data: dataset,
-                            borderWidth: 1
+                            borderWidth: 1,
+                            lineTension: 0.4,
+                            borderColor: colorLine[index-1],
+                            backgroundColor: bgColorLine[index-1]       
+                        });
+                        console.log('append?')
+                    } else {
+                        //update the existing one
+                        chart.data.datasets[index-1].label = $('.option_county[data-index='+index+'] option:selected').eq(0).text()+' - '+$('.option_city[data-index='+index+'] option:selected').eq(0).text()
+                        chart.data.datasets[index-1].data = dataset;
+                        console.log('update')
+                    }
+                    chart.options.scales.x.min = getMinDateString();
+                    chart.update();
+                    //chart.destroy();
+                    return chart
+                } else {
+                    chart = new Chart(target_element, {
+                        type: 'line',
+                        data: {
+                            // labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                            datasets: [{
+                                // label: lable_name,
+                                label: $('.option_county[data-index='+index+'] option:selected').eq(0).text()+' - '+$('.option_city[data-index='+index+'] option:selected').eq(0).text(),
+                                data: dataset,
+                                borderWidth: 1,
+                                lineTension: 0.4,
+                                borderColor: colorLine[index-1],
+                                backgroundColor: bgColorLine[index-1]          
+                                // borderColor: borderColor,
+                                // backgroundColor: borderColor
+                            }]
                         },
-                        {
-                            label: '# of Injured',
-                            data: injured_dataset,
-                            borderWidth: 1,
-                        },{
-                            label: '# of Killed',
-                            data: killed_dataset,
-                            borderWidth: 1,
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true
+                        options: {
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: title_name,
+                                    font: {
+                                        size: 24
+                                    }
+                                }
                             },
-                            x: {
-                                min: $('#dpd1').val(),
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        min: 0,
+                                        callback: function(value, index, values) {
+                                            if (Math.floor(value) === value) {
+                                                return value;
+                                            }
+                                        }
+                                    }
+                                    // grid: {
+                                    //     display: false
+                                    // }
+                                },
+                                x: {
+                                    min: getMinDateString(),
+                                    grid: {
+                                        display: false
+                                    },
+                                }
                             }
                         }
+                    });
+                    console.log('getMinDateString()', getMinDateString());
+                    return chart
+                }
+                    
+            }
+        
+            function getMinDateString() {
+                var checked_frequency = document.querySelector('input[name = "frequency"]:checked').value;
+                if (checked_frequency == "monthly") {
+                    return getDateValue(checked_frequency, 1).substring(0, 7);
+                } else if (checked_frequency == "yearly") {
+                    return getDateValue(checked_frequency, 1);
+                } else {
+                    return getDateValue(checked_frequency, 1);
+                }
+                
+            }
+        
+            function getCollisionDate(data) {
+                var checked_frequency = document.querySelector('input[name = "frequency"]:checked').value;
+                if (checked_frequency == "monthly") {
+                    return data.collision_month.substring(0, 7);
+                } else if (checked_frequency == "yearly") {
+                    return data.collision_year;
+                } else {
+                    return data.collision_date.substring(0, 10);
+                }
+            }
+        
+            function loadChart(url, index) {
+                fetch(url).then(function(response) {
+                    return response.json();
+                }).then(function(data) {
+                    if (data.success) {
+                        const d = data.payload;
+                        var checked_frequency = document.querySelector('input[name = "frequency"]:checked').value;
+                        var dataset = [];
+                        var injured_dataset = [];
+                        var killed_dataset = [];
+                        console.log('checked_frequency', checked_frequency);
+                        if (checked_frequency == 'yearly') {
+                            var current_date = parseInt($('#dpy1').val().substring(0,4));
+                            var end_date = parseInt($('#dpy2').val().substring(0,4));
+                            for (var i=0;i<d.length;i++) {
+                                var collision_date = parseInt(getCollisionDate(d[i]));//.collision_date.substring(0, 10);
+                                while(current_date != collision_date) {
+                                    dataset.push({x:current_date.toString(), y:0});
+                                    injured_dataset.push({x:current_date.toString(), y:0});
+                                    killed_dataset.push({x:current_date.toString(), y:0});
+                                    current_date++;
+                                    if (current_date == collision_date) {
+                                        break;
+                                    }
+                                } 
+        
+                                dataset.push({x:getCollisionDate(d[i]).toString(), y:d[i].num_accidents});
+                                injured_dataset.push({x:getCollisionDate(d[i]).toString(), y:d[i].total_injured});
+                                killed_dataset.push({x:getCollisionDate(d[i]).toString(), y:d[i].total_killed});
+                                current_date++;
+                            }
+                            current_date--;
+                            while(current_date != end_date) {
+                                dataset.push({x:current_date.toString(), y:0});
+                                injured_dataset.push({x:current_date.toString(), y:0});
+                                killed_dataset.push({x:current_date.toString(), y:0});
+                                current_date++;
+                            } 
+                        } else if (checked_frequency == 'monthly') {
+                            var current_date = new Date($('#dpm1').val());
+                            var end_date = new Date($('#dpm2').val());
+                            for (var i=0;i<d.length;i++) {
+                                var collision_date = getCollisionDate(d[i]);//.collision_date.substring(0, 10);
+                                console.log('current_date outside', index, current_date.toISOString().substring(0, 7));
+                                console.log('collision_date outside', index, collision_date);
+                                while(current_date.toISOString().substring(0, 7) != collision_date) {
+                                    console.log('current_date', index, current_date.toISOString().substring(0, 7));
+                                    console.log('collision_date', index, collision_date);
+                                    dataset.push({x:current_date.toISOString().substring(0, 7), y:0});
+                                    injured_dataset.push({x:current_date.toISOString().substring(0, 7), y:0});
+                                    killed_dataset.push({x:current_date.toISOString().substring(0, 7), y:0});
+                                    current_date.setUTCDate(2);
+                                    current_date.setUTCMonth(current_date.getUTCMonth()+1, 1);
+                                    if (current_date.toISOString().substring(0, 7) == collision_date) {
+                                        break;
+                                    }
+                                    break;
+                                } 
+                                console.log('i am out~~~', index);
+                                dataset.push({x:getCollisionDate(d[i]), y:d[i].num_accidents});
+                                injured_dataset.push({x:getCollisionDate(d[i]), y:d[i].total_injured});
+                                killed_dataset.push({x:getCollisionDate(d[i]), y:d[i].total_killed});
+                                console.log('current_date before increment', index, current_date.toISOString());
+                                current_date.setUTCDate(2);
+                                current_date.setUTCMonth(current_date.getUTCMonth()+1);
+                                console.log('current_date after increment', index, current_date.toISOString());
+                            }
+                            current_date.setUTCDate(2);
+                            current_date.setUTCMonth(current_date.getUTCMonth()-1);
+                            console.log('current_date', current_date.toISOString().substring(0, 7));
+                            console.log('end_date', end_date.toISOString().substring(0, 7));
+                            while(current_date.toISOString().substring(0, 7) != end_date.toISOString().substring(0, 7)) {
+                                console.log('current_date in while loop', current_date.toISOString().substring(0, 7));
+                                console.log('end_date in while loop', end_date.toISOString().substring(0, 7));
+                                dataset.push({x:current_date.toISOString().substring(0, 7), y:0});
+                                injured_dataset.push({x:current_date.toISOString().substring(0, 7), y:0});
+                                killed_dataset.push({x:current_date.toISOString().substring(0, 7), y:0});
+                                current_date.setUTCDate(2);
+                                current_date.setUTCMonth(current_date.getUTCMonth()+1, 1);
+                                break;
+                            } 
+                        } else if (checked_frequency == 'daily') {
+                            var current_date = new Date($('#dpd1').val());
+                            var end_date = new Date($('#dpd2').val());
+                            for (var i=0;i<d.length;i++) {
+        
+                                var collision_date = getCollisionDate(d[i]);//.collision_date.substring(0, 10);
+                                while(current_date.toISOString().substring(0, 10) != collision_date) {
+                                    dataset.push({x:current_date.toISOString().substring(0, 10), y:0});
+                                    injured_dataset.push({x:current_date.toISOString().substring(0, 10), y:0});
+                                    killed_dataset.push({x:current_date.toISOString().substring(0, 10), y:0});
+                                    current_date.setDate(current_date.getDate()+1);
+                                    if (current_date.toISOString().substring(0, 10) == collision_date) {
+                                        break;
+                                    }
+                                } 
+        
+                                dataset.push({x:d[i].collision_date.substring(0, 10), y:d[i].num_accidents});
+                                injured_dataset.push({x:d[i].collision_date.substring(0, 10), y:d[i].total_injured});
+                                killed_dataset.push({x:d[i].collision_date.substring(0, 10), y:d[i].total_killed});
+                                current_date.setDate(current_date.getDate()+1);
+                            }
+                            current_date.setDate(current_date.getDate()-1);
+                            while(current_date.toISOString().substring(0, 10) != end_date.toISOString().substring(0, 10)) {
+                                dataset.push({x:current_date.toISOString().substring(0, 10), y:0});
+                                injured_dataset.push({x:current_date.toISOString().substring(0, 10), y:0});
+                                killed_dataset.push({x:current_date.toISOString().substring(0, 10), y:0});
+                                current_date.setDate(current_date.getDate()+1);
+                            } 
+                        }
+                        
+                        console.log('dataset', dataset);
+                        chart1 = drawChart(chart1, ctx1, index, 'Number of Car Accidents Occured', '#212529', dataset);
+                        chart2 = drawChart(chart2, ctx2, index, 'Number of People Injured from Car Accidents', '#F9F871', injured_dataset);
+                        chart3 = drawChart(chart3, ctx3, index, 'Number of People Died from Car Accidents', '#E5BBCE', killed_dataset);
                     }
+                }).catch(function(err) {
+                    console.log("Booo", err);
                 });
             }
-        }).catch(function(err) {
-            console.log("Booo", err);
-        });
-    }
-    
-    window.onload = function() {
-        const option_county = document.getElementById('option_county');
-        const option_city = document.getElementById('option_city');
-
-        fetch("/city_compact.json").then(function(response) {
-            return response.json();
-        }).then(function(data) {
-            var counties = data.items.filter(option=> option.city_ID == 'All');
-            cities = data.items.filter(option=> option.city_ID != 'All');
-            for(var i=0;i<counties.length;i++) {
-                option_county.options[option_county.options.length] = new Option(counties[i].county, counties[i].county_ID);
+        
+            $(document).ready(function(){
+                $('.option_county').change(option_county_change_callback)
+                $('.option_city').change(option_city_change_callback)
+            });
+            
+            var option_county_change_callback = function(event) {
+                //empty cities dropdowns
+                var index = $(this).attr('data-index');
+                var target = $('.option_city[data-index='+index+']').eq(0);
+                target.find('option').not(':first').remove();
+                //display correct values
+                var select_cities = cities.filter(option=> option.county_ID == this.value);
+                for(var i=0;i<select_cities.length;i++) {
+                    target.append(new Option(select_cities[i].city, select_cities[i].city_ID));
+                }
             }
-        }).catch(function(err) {
-            console.log("Booo", err);
-        });
-        option_county.onchange = function() {
-            //empty cities dropdowns
-            option_city.length = 1;
-            //display correct values
-            var select_cities = cities.filter(option=> option.county_ID == this.value);
-            for(var i=0;i<select_cities.length;i++) {
-                option_city.options[option_city.options.length] = new Option(select_cities[i].city, select_cities[i].city_ID);
+        
+            var option_city_change_callback = function(event) {
+                var index = $(this).attr('data-index');
+                updateChart(index);
             }
-        }
-        option_city.onchange = function() {
-            var checked_frequency = document.querySelector('input[name = "frequency"]:checked');
-            var url = "/collisions?frequency="+checked_frequency.value
-                +"&county_id="+parseInt(option_county.value)
-                +'&city_id='+parseInt(this.value)
-                +'&start='+$('#dpd1').val()
-                +'&end='+$('#dpd2').val()
-            loadChart(url);
-        }
-    }
-    
-
-    
-  </script>
-
+        
+            window.onload = function() {
+                const option_county = document.getElementsByClassName('option_county');
+                const option_city = document.getElementsByClassName('option_city');
+                console.log('option_county',option_county);
+                fetch("/city_compact.json").then(function(response) {
+                    return response.json();
+                }).then(function(data) {
+                    var counties = data.items.filter(option=> option.city_ID == 'All');
+                    cities = data.items.filter(option=> option.city_ID != 'All');
+                    for(var i=0;i<counties.length;i++) {
+                        for(var j=0;j<option_county.length;j++) {
+                            option_county[j].options[option_county[j].options.length] = new Option(counties[i].county, counties[i].county_ID);
+                        }
+                        
+                    }
+                }).catch(function(err) {
+                    console.log("Booo", err);
+                });
+                
+            }
+            
+        
+            
+          </script>
+    </div>
+</body>
