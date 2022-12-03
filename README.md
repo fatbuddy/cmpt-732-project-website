@@ -59,3 +59,6 @@ https://www.cnn.com/2018/02/27/americas/los-angeles-traffic/index.html
 
 DatePicker
 https://www.eyecon.ro/bootstrap-datepicker/
+
+Image by Freepik
+https://www.freepik.com/free-photo/safety-first-sign-outdoors_34654166.htm#query=safety%20first%20sign&position=2&from_view=keyword
