@@ -19,6 +19,8 @@ const Collision = require("./models/Collision");
 const Categories = require('./models/Categories');
 const CategoryTime = require('./models/CategoryTime');
 const CategoryRegionTime = require('./models/CategoryRegionTime');
+const CategoryRegion = require('./models/CategoryRegion');
+
 
 app.use(express.static('public'))
 app.use(express.json());
@@ -54,6 +56,16 @@ app.get("/categoryTime", (req, res) => {
 
 app.get("/categoryRegionTime", (req, res) => {
   CategoryRegionTime.findAll(pool, req.query.category_name,req.query.county_id, req.query.city_id, (err, result) => {
+    if (err) {
+      res.send({ success: false, payload: err });
+    } else {
+      res.send({ success: true, payload: result });
+    }
+  });
+});
+
+app.get("/categoryRegion", (req, res) => {
+  CategoryRegion.findAll(pool, req.query.category_name,req.query.county_id, req.query.city_id, (err, result) => {
     if (err) {
       res.send({ success: false, payload: err });
     } else {

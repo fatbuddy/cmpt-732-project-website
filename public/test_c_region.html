@@ -3,7 +3,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Catetories Comparsions over Time and Region</title>
+    <title>Categories Comparsions over Region</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
     <script src="/js/bootstrap-datepicker.js"></script>
@@ -55,30 +55,30 @@
         </div>
         <div class="row mb-2">
             <div class="col col-6">
-                <select id="option_category_val" class="form-select">
-                    <option value="" selected="selected" autocomplete="off" >Select Value</option>
-                </select> 
+                <select class="option_county form-select" id="county_3">
+                    <option value="" selected="selected" autocomplete="off" >Select County</option>
+                </select>
+                
             </div>
-            <div class="tab col col-6 btn-group btn-group-toggle" data-toggle="buttons">
-                <label class="btn btn-secondary active">
-                  <input type="radio" name="chart-type" onclick="plotLine()" value="line" autocomplete="off" checked> Line
-                </label>
-                <label class="btn btn-secondary">
-                    <input type="radio"  name="chart-type" onclick="plotStack()" value="stack" autocomplete="off"> Stack
-                </label>
-          </div>
+            <div class="col col-6">
+                <select class="option_city county_3 form-select" id="city_3">
+                    <option value="" selected="selected" autocomplete="off" >Select City</option>
+                </select>
+            </div>
         </div>
+        </div>
+    </div>
+    <div id="chart-wrapper">
+      <canvas id="my-chart"></canvas>
+    </div>
         </div>
         
-          </div>
-          <div id="chart-wrapper">
-            <canvas id="my-chart"></canvas>
-          </div>
+
 
       </div>
     </div>
 
-</body>   
+</body>  
 
 
 <script>
@@ -88,21 +88,32 @@ const feature = document.getElementById("option_feature");
 var labels = {}
 var chart;
 var dataset_data;
+var dataset_data_label;
 var category_values;
 var lineChartData;
 var stackChartData;
 var selected_cities = {};
+var data_labels;
+var city_id_name = {};
+var colors = ["#003f5c",
+"#2f4b7c",
+"#665191",
+"#a05195",
+"#d45087",
+"#f95d6a",
+"#ff7c43",
+"#ffa600",
+"#de425b",
+"#488f31"];
 
 function init_data(){
   dataset_data = {};
 //   data_labels = [];
-  category_values = [];
-//   data_labels = [];
+//   category_values = [];
+  data_labels = [];
+//   dataset_data_label = [];
 }
-function generateArray (start, end) {
-    return Array.from(new Array(end + 1).keys()).slice(start)
-}
-var data_labels = generateArray(2001,2021);
+
 
 
 function reset_dataset(){
@@ -112,16 +123,7 @@ function reset_dataset(){
         data:{
             datasets: [],
             spanGaps: true
-        },
-        options:{
-            plugins:{
-                title: {
-                display: true,
-                text: 'Line Chart Comparsion between Two Cities'
-                }
-            }
-        }
-    };
+    }};
     stackChartData=
     {
         type: 'bar',
@@ -132,7 +134,7 @@ function reset_dataset(){
             plugins: {
                 title: {
                 display: true,
-                text: 'Stack Chart Comparsion between Two Cities'
+                text: 'Chart.js Bar Chart - Stacked'
                 },
             },
             responsive: true,
@@ -150,13 +152,16 @@ function reset_dataset(){
 }
 
 
-function loadData(url) {
+function loadData(url, city_class) {
+    // dataset_data[city_class] = []
+    // data_labels[city_class] = []
   fetch(url).then(function(response) {
       return response.json();
   }).then(function(data) {
       if (data.success) {
-        init_data();
-        data = data.payload;    
+        data = data.payload;
+        // console.log(data)    
+        // console.log(city_class)
         let keys = Object.keys(data[0]);
         curr_feature = keys[0];
         for(i in data){
@@ -174,94 +179,55 @@ function loadData(url) {
                 city = "0" + city;
             }
             county_city = "" + county + city;
-            if(!dataset_data[county_city]) dataset_data[county_city] = {}
-            if(!dataset_data[county_city][feature_val]) dataset_data[county_city][feature_val] = []
-            dataset_data[county_city][feature_val].push({x:year, y:collisions});
-            if( (category_values.indexOf(feature_val) === -1)){
-                category_values.push(feature_val);
-            }
+
+
+            city_name = labels[city_class][county_city];
+            if(Object.keys(city_id_name).indexOf(city_class) === -1) city_id_name[city_class] = ""
+            city_id_name[city_class] = city_name
+
+            if(!dataset_data[feature_val]) dataset_data[feature_val] = {};
+            if(!dataset_data[feature_val][city_class]) dataset_data[feature_val][city_class] = []
+            dataset_data[feature_val][city_class] = percent
+            // dataset_data[feature_val].push({x:city_class,y:percent});
+            if(data_labels.indexOf(city_class) === -1) data_labels.push(city_class);
+            // if(dataset_data_label.indexOf(feature_val) === -1) dataset_data_label.push(feature_val)
 
         }
-        $("#option_category_val").find('option').not(':first').remove()
-        for (i in category_values){
-            $("#option_category_val").append(new Option(category_values[i]));
-        }
+        
+        plotStack(city_class);
       }
   })
 }
 
-function get_dataset(chart_type){
-    if(chart_type == 'line'){
-        lineChartData.label = data_labels;
-        lineChartData.data.labels = data_labels;
-        selected_cat_val = $("#option_category_val")[0].value;
-        var city_name;
-        for (const [key, value] of Object.entries(dataset_data)) {
-            if(labels["county_1"][key]){
-                city_name = labels["county_1"][key];
-            }
-            else{
-                city_name = labels["county_2"][key];
-            }
-            var all_data = value[selected_cat_val];
-            var all_years = all_data.map(a => a['x'])
 
-            for(i in data_labels){
-                if (all_years.indexOf(data_labels[i]) === -1){
-                    all_data.push({x:data_labels[i],y:0})
-                }
-            }
-            all_data.sort((a,b) => (a['x'] > b['x']) ? 1 : ((b['x'] > a['x']) ? -1 : 0))
-            lineChartData.data.datasets.push({
-                label: city_name,
-                data: value[selected_cat_val],
-                lineTension: 0.4,
-                borderWidth: 1
-            })
-        }
+function get_dataset(city_class){
+    reset_dataset();
+    city_name_label = []
+    for(i in data_labels){
+        city_name_label.push(city_id_name[data_labels[i]])
     }
-    else if(chart_type == 'stack'){
-        stackChartData.label = data_labels;
-        stackChartData.data.labels = data_labels;
-        selected_cat_val = $("#option_category_val")[0].value;
-        var city_name;
-        for (const [key, value] of Object.entries(dataset_data)) {
-            if(labels["county_1"][key]){
-                city_name = labels["county_1"][key];
-            }
-            else{
-                city_name = labels["county_2"][key];
-            }
-
-            stackChartData.data.datasets.push({
-                label: city_name,
-                data: value[selected_cat_val]
-            })
-        }
+    stackChartData.labels  = city_name_label
+    stackChartData.data.labels = city_name_label
+    var index = 0
+    for (const[key,value] of Object.entries(dataset_data)){
+        stackChartData.data.datasets.push({
+            label:key,
+            data: Object.values(value),
+            backgroundColor: colors[index]
+        })
+        index++;
     }
-
-
+    stackChartData.options.categoryPercentage = city_name_label.length/5,
+    stackChartData.options.barPercentage = 0.5
 
 }
 
 
-function plotLine(){
-    
-    if (chart) chart.destroy();
-    // console.log(dataset_data)
-    
-    // console.log(data_labels)
-    reset_dataset();
-    get_dataset("line");
-    // console.log(lineChartData)
-    chart = new Chart(ctx, lineChartData
-    )
-}
-
-function plotStack(){
-    if (chart) chart.destroy();
-    reset_dataset();
-    get_dataset("stack");
+function plotStack(city_class){
+    if (chart) chart.destroy();  
+    // reset_dataset();
+    get_dataset(city_class);
+    // console.log(stackChartData)
     chart = new Chart(ctx, stackChartData);
 }
 
@@ -270,6 +236,8 @@ function plotStack(){
 
 window.onload = function() {
     var cities;
+    init_data();
+    reset_dataset();
     fetch("/city_compact.json").then(function(response) {
         return response.json();
     }).then(function(data) {
@@ -277,9 +245,7 @@ window.onload = function() {
         cities = data.items.filter(option=> option.city_ID != 'All');
         for(var i=0;i<counties.length;i++) {
             $(".option_county").each(function(){
-                county_name = counties[i].county;
-                county_name = county_name.charAt(0) + county_name.substring(1).toLowerCase()
-                $(this).append(new Option(county_name, counties[i].county_ID));
+                $(this).append(new Option(counties[i].county, counties[i].county_ID));
             })
         }
     }).catch(function(err) {
@@ -292,9 +258,7 @@ window.onload = function() {
         var changed_id = $(this).attr("id");
         $("."+changed_id).find('option').not(':first').remove();
         for(i in select_cities){
-            city_name = select_cities[i].city;
-            city_name = city_name.charAt(0) + city_name.substring(1).toLowerCase()
-            $("."+changed_id).append(new Option(city_name, select_cities[i].city_ID));
+            $("."+changed_id).append(new Option(select_cities[i].city, select_cities[i].city_ID));
         }
     })
 
@@ -305,33 +269,13 @@ window.onload = function() {
         var county_id = parseInt(curr_county);
         var city_id = parseInt(this.value);
         var city_name = $("option:selected", this).text()
-        city_name =  city_name.charAt(0) + city_name.substring(1).toLowerCase()
-        // labels[city_class] = [curr_county + this.value,city_name];
+        labels[city_class] = [curr_county + this.value,city_name];
         labels[city_class] = {};
         labels[city_class][curr_county + this.value] = city_name;
-        if (Object.keys(labels).length == 2){
-            var keys = Object.values(labels).map(a => Object.keys(a))
-            var cities = keys.map(a => a[0].substring(2,4))
-            var counties = keys.map(a => a[0].substring(0,2))
-            var url = "/categoryRegionTime?category_name="+feature.value+
-                "&county_id=" + counties + "&city_id=" + cities;
-            loadData(url); 
-        }
+        var url = "/categoryRegion?category_name="+feature.value+
+                "&county_id=" + county_id + "&city_id=" + city_id;
+        loadData(url, city_class)
     })
-    $("#option_category_val").change(function(){
-        // plotLine();
-        var chart_type = $('input[name="chart-type"]:checked').val();
-        if(chart_type === "line") plotLine()
-        else plotStack()
-
-    })
-
-
-    
-
 }
-
-
-
 </script>
 
