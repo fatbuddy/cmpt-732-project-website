@@ -3,23 +3,56 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <meta name="description" content="" />
   <meta name="author" content="" />
-  <title>Collisions over Catetories</title>
+  <title>CMPT 732 Project Website - Part A-B Collisions over Catetories</title>
+  <!-- Favicon-->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <!-- Font Awesome icons (free version)-->
+  <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+  <!-- Google fonts-->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
+  <!-- Core theme CSS (includes Bootstrap)-->
+  <link href="css/styles.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
   <script src="/js/bootstrap-datepicker.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0/chartjs-plugin-datalabels.min.js" integrity="sha512-R/QOHLpV1Ggq22vfDAWYOaMd5RopHrJNMxi8/lJu8Oihwi4Ho4BRFeiMiCefn9rasajKjnx9/fTQ/xkWnkDACg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-  <link href="/css/styles.css" rel="stylesheet" type="text/css"/>
   <link href="/css/category.css" rel="stylesheet" type="text/css"/>
-  <link href="/css/datepicker.css" rel="stylesheet" type="text/css"/>
+
 </head>
 
 <body id="page-top">
+    <!-- Navigation-->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top navbar-shrink" id="mainNav">
+      <div class="container">
+          <a class="" href="/" style="text-decoration: none;font-weight: bold;font-size: 24px;"><img class="me-3" src="/android-chrome-192x192.png" style="height:50px;" alt="..." />Epic Byte</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+              Menu
+              <i class="fas fa-bars ms-1"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarResponsive">
+              <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
+                  <li class="nav-item"><a class="nav-link" href="/#about">About</a></li>
+                  <li class="nav-item"><a class="nav-link" href="/#services">Summary</a></li>
+                  <li class="nav-item"><a class="nav-link" href="/#portfolio">Analysis</a></li>
+                  <li class="nav-item"><a class="nav-link" href="/#team">Team</a></li>
+              </ul>
+          </div>
+      </div>
+  </nav>
+  <section class="page-section bg-light" id="point1">
     <div class="container">
-      <div class="row mt-3 pb-3" style="border-bottom: 1px solid #ced4da;">
+      <h1>Category Chart</h1>
+      <div class="row mt-3 pb-3 justify-content-center" style="border-bottom: 1px solid #ced4da;">
         <div class="col col-7 col-select">
           <div class="row mb-2">
-              <div class="col col-6">
+            <div class="col-md-6 brd">
                   <select id="option_feature" class="form-select" autocomplete="off" >
                     <option value="" selected="selected">Select Category</option>
                     <option value="day_of_week">Day of Week</option>
@@ -41,13 +74,16 @@
             </div>
         </div>
       </div>
+      <div class="row justify-content-center">
           <div id="chart-wrapper">
             <canvas id="my-chart"></canvas>
-          </div>
+        </div>
+      </div>
+          
 
       </div>
     </div>
-
+  </section>
 </body> 
 
 <script>
