@@ -24,6 +24,7 @@
                     <option value="" selected="selected">Select Category</option>
                     <option value="day_of_week">Day of Week</option>
                     <option value="day_or_night">Day or Night</option>
+                    <option value="season">Season</option>
                   </select>
               </div>
               <div class="col col-6 btn-group btn-group-toggle" data-toggle="buttons">
@@ -58,6 +59,7 @@
   var dataset_data_percent;
   var data_size;
   var day_label = ['Sun','Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  var season_label = ["spring", "summer", "autumn", "winter"];
   function init_data(){
     dataset_data = [];
     dataset_data_percent = [];
@@ -86,6 +88,12 @@
             // place the label in the right position
             if (day_label.includes(feature_val)){
               index = day_label.indexOf(feature_val);
+              if (index !== -1 & (labels.indexOf(feature_val) === -1) ){
+                labels[index] = (feature_val);
+              }
+            }
+            else if (season_label.includes(feature_val)){
+              index = season_label.indexOf(feature_val);
               if (index !== -1 & (labels.indexOf(feature_val) === -1) ){
                 labels[index] = (feature_val);
               }
@@ -213,7 +221,6 @@
     var dataset_total_lst = Object.values(dataset_total);
     const reducer = (accumulator, currentValue) => accumulator + currentValue;
     var total = dataset_total_lst.reduce(reducer);
-    // document.getElementById("chart-wrapper").style.width = 800;
 
     chart = new Chart(ctx, {
       type: "doughnut",
@@ -230,7 +237,6 @@
   
   function plotPercentStack(){
   if (chart) chart.destroy();
-  console.log(dataset_data_percent)
     chart = new Chart(ctx, {
       type: "bar",
       data: {

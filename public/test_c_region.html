@@ -20,10 +20,10 @@
         <div class="col col-7 col-select">
           <div class="row mb-2">
               <div class="col col-6">
-                  <select id="option_feature"  class="form-select" >
-                    <option value="" selected="selected" autocomplete="off" >Select Category</option>
+                  <select id="option_feature"  class="form-select" autocomplete="off">
+                    <option value="" selected="selected"  >Select Category</option>
                     <option value="pcf_violation_category">PCF Violation Category</option>
-                    <option value="day_or_night">test</option>
+                    <option value="lighting">Lighting</option>
                 </select>
               </div>
           </div>
@@ -159,9 +159,8 @@ function loadData(url, city_class) {
       return response.json();
   }).then(function(data) {
       if (data.success) {
+        // if(data_labels[feature.value]) data_labels[feature.value] = {}
         data = data.payload;
-        // console.log(data)    
-        // console.log(city_class)
         let keys = Object.keys(data[0]);
         curr_feature = keys[0];
         for(i in data){
@@ -184,10 +183,11 @@ function loadData(url, city_class) {
             city_name = labels[city_class][county_city];
             if(Object.keys(city_id_name).indexOf(city_class) === -1) city_id_name[city_class] = ""
             city_id_name[city_class] = city_name
-
-            if(!dataset_data[feature_val]) dataset_data[feature_val] = {};
-            if(!dataset_data[feature_val][city_class]) dataset_data[feature_val][city_class] = []
-            dataset_data[feature_val][city_class] = percent
+            // feature.value
+            if(!dataset_data[feature.value]) dataset_data[feature.value] = {}
+            if(!dataset_data[feature.value][feature_val]) dataset_data[feature.value][feature_val] = {};
+            if(!dataset_data[feature.value][feature_val][city_class]) dataset_data[feature.value][feature_val][city_class] = []
+            dataset_data[feature.value][feature_val][city_class] = percent
             // dataset_data[feature_val].push({x:city_class,y:percent});
             if(data_labels.indexOf(city_class) === -1) data_labels.push(city_class);
             // if(dataset_data_label.indexOf(feature_val) === -1) dataset_data_label.push(feature_val)
@@ -196,20 +196,18 @@ function loadData(url, city_class) {
         
         plotStack(city_class);
       }
+      
   })
 }
 
-
 function get_dataset(city_class){
-    reset_dataset();
-    city_name_label = []
-    for(i in data_labels){
-        city_name_label.push(city_id_name[data_labels[i]])
-    }
+    // reset_dataset();
+    
+    city_name_label = data_labels.map(a => city_id_name[a])
     stackChartData.labels  = city_name_label
     stackChartData.data.labels = city_name_label
     var index = 0
-    for (const[key,value] of Object.entries(dataset_data)){
+    for (const[key,value] of Object.entries(dataset_data[feature.value])){
         stackChartData.data.datasets.push({
             label:key,
             data: Object.values(value),
@@ -217,7 +215,7 @@ function get_dataset(city_class){
         })
         index++;
     }
-    stackChartData.options.categoryPercentage = city_name_label.length/5,
+    stackChartData.options.categoryPercentage = data_labels.length/5,
     stackChartData.options.barPercentage = 0.5
 
 }
@@ -225,14 +223,28 @@ function get_dataset(city_class){
 
 function plotStack(city_class){
     if (chart) chart.destroy();  
-    // reset_dataset();
+    reset_dataset();
     get_dataset(city_class);
-    // console.log(stackChartData)
     chart = new Chart(ctx, stackChartData);
 }
 
 
-
+$("#option_feature").change(function(){
+    var selected_cities = []
+    var selected_counties = []
+    data_labels = []
+    $(".option_city").each(function(){
+        if($(this).find("option:selected").val() !== "")
+        {
+            temp_city = $(this).find("option:selected").val();
+            temp_class = $(this).attr("class").split(' ')[1];
+            temp_county = $("#" + temp_class )[0].value;
+            var url = "/categoryRegion?category_name="+feature.value+
+            "&county_id=" + temp_county + "&city_id=" + temp_city;
+            loadData(url, temp_class);                  
+        }
+    })         
+})
 
 window.onload = function() {
     var cities;
@@ -245,7 +257,9 @@ window.onload = function() {
         cities = data.items.filter(option=> option.city_ID != 'All');
         for(var i=0;i<counties.length;i++) {
             $(".option_county").each(function(){
-                $(this).append(new Option(counties[i].county, counties[i].county_ID));
+                county_name = counties[i].county;
+                county_name = county_name.charAt(0) + county_name.substring(1).toLowerCase()
+                $(this).append(new Option(county_name, counties[i].county_ID));
             })
         }
     }).catch(function(err) {
@@ -258,7 +272,9 @@ window.onload = function() {
         var changed_id = $(this).attr("id");
         $("."+changed_id).find('option').not(':first').remove();
         for(i in select_cities){
-            $("."+changed_id).append(new Option(select_cities[i].city, select_cities[i].city_ID));
+            city_name = select_cities[i].city;
+            city_name = city_name.charAt(0) + city_name.substring(1).toLowerCase()
+            $("."+changed_id).append(new Option(city_name, select_cities[i].city_ID));
         }
     })
 
