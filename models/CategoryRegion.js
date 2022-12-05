@@ -3,7 +3,7 @@ const CategoryRegion = function(categories) {
 
 
 CategoryRegion.findAll = (db, category_name, county_id, city_id, result) => {
-    const table_name = category_name + "_over_location";
+    const table_name = "location_" + category_name;
     var query = "SELECT * FROM "+table_name
     + " WHERE county_ID=" + county_id + " and city_ID=" + city_id;
 

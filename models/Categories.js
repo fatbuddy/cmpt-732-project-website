@@ -4,7 +4,7 @@ const Categories = function(categories) {
 
 Categories.findAll = (db, category_name, result) => {
     const table_name = "collisions_severity_by_" + category_name;
-    const query = "SELECT * FROM "+table_name;
+    const query = "SELECT * FROM "+table_name + " ORDER BY " + category_name;
     db.execute(query, (err, res) => {
         if (err) {
             console.log("error: ", err);

@@ -58,6 +58,21 @@
                     <option value="day_of_week">Day of Week</option>
                     <option value="day_or_night">Day or Night</option>
                     <option value="season">Season</option>
+                    <option value="hour">Hour</option>
+                    <option value="month">Month</option>
+                    <option value="year">Year</option>
+                    <option value="holiday">Holiday</option>
+                    <option value="weather">Weather</option>
+                    <option value="road_condition">Road Conditoin</option>
+                    <option value="pcf_violation_category">PCF Violation Category</option>
+                    <option value="road_surface">Road Surface</option>
+                    <option value="lighting">Lighting</option>
+                    <option value="alcohol_involved">Alcohol Involved</option>
+                    <option value="party_sex">Party Sex</option>
+                    <option value="driver_age">Driver Age</option>
+                    <option value="party_race">Party Race</option>
+                    <option value="vehicle_make">Vehicle Make</option>
+                    <option value="vehicle_age">Vehicle Age</option>
                   </select>
               </div>
               <div class="col col-6 btn-group btn-group-toggle" data-toggle="buttons">
@@ -96,6 +111,7 @@
   var data_size;
   var day_label = ['Sun','Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   var season_label = ["spring", "summer", "autumn", "winter"];
+  var age_label = ["less than 20", "20 - 30", "30 - 40", "40 - 50", "50 - 60", "60 - 70", "more than 70"];
   function init_data(){
     dataset_data = [];
     dataset_data_percent = [];
@@ -130,6 +146,12 @@
             }
             else if (season_label.includes(feature_val)){
               index = season_label.indexOf(feature_val);
+              if (index !== -1 & (labels.indexOf(feature_val) === -1) ){
+                labels[index] = (feature_val);
+              }
+            }
+            else if (age_label.includes(feature_val)){
+              index = age_label.indexOf(feature_val);
               if (index !== -1 & (labels.indexOf(feature_val) === -1) ){
                 labels[index] = (feature_val);
               }
@@ -204,8 +226,8 @@
             stacked: true
           }
         },
-        categoryPercentage: data_size/5,
-        barPercentage: 0.5
+        categoryPercentage: data_size/8,
+        barPercentage: 0.3
   }
   });
 
@@ -238,6 +260,7 @@
       },
       align: 'end',
       anchor: 'end',
+      display: 'auto'
       
     }
   },
@@ -247,7 +270,7 @@
               right: 0,
               top: 50,
               bottom: 50
-          }
+          },
       }
   };
 
@@ -315,8 +338,8 @@
             stacked: true
           }
         },
-        categoryPercentage: data_size/5,
-        barPercentage: 0.5
+        categoryPercentage: data_size/8,
+        barPercentage: 0.3
   }
   }); 
   }

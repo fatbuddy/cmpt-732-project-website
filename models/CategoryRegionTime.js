@@ -3,7 +3,7 @@ const CategoryRegionTime = function(categories) {
 
 
 CategoryRegionTime.findAll = (db, category_name, county_id, city_id, result) => {
-    const table_name = category_name + "_time_location";
+    const table_name = "time_location_" + category_name ;
     var query = "SELECT * FROM "+table_name
     + " WHERE ";
     var county_id_lst = county_id.split(',')
