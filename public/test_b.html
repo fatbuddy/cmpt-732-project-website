@@ -181,7 +181,14 @@
     })
 
   }
-
+  function get_category_percent(){
+    if(data_size < 8) return data_size/5;
+    else return data_size/8;
+  }
+  function get_bar_percent(){
+    if(data_size < 8) return 0.5;
+    else return 0.3;
+  }
   function plotStack() {
     if (chart) chart.destroy();
     chart = new Chart(ctx, {
@@ -220,14 +227,14 @@
         responsive: true,
         scales: {
           x: {
-            stacked: true,
+            stacked: true
           },
           y: {
             stacked: true
           }
         },
-        categoryPercentage: data_size / 8,
-        barPercentage: 0.3
+        categoryPercentage: get_category_percent(),
+        barPercentage: get_bar_percent(),
       }
     });
   }
@@ -335,8 +342,8 @@
             stacked: true
           }
         },
-        categoryPercentage: data_size / 8,
-        barPercentage: 0.3
+        categoryPercentage: get_category_percent(),
+        barPercentage: get_bar_percent(),
       }
     });
   }
