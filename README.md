@@ -62,3 +62,6 @@ https://www.eyecon.ro/bootstrap-datepicker/
 
 Image by Freepik
 https://www.freepik.com/free-photo/safety-first-sign-outdoors_34654166.htm#query=safety%20first%20sign&position=2&from_view=keyword
+
+Image by Needpix
+https://www.needpix.com/photo/1872103/cardiac-pulse-time-series-statistics-free-pictures-free-photos-free-images-royalty-free-free-illustrations
