@@ -63,5 +63,11 @@ https://www.eyecon.ro/bootstrap-datepicker/
 Image by Freepik
 https://www.freepik.com/free-photo/safety-first-sign-outdoors_34654166.htm#query=safety%20first%20sign&position=2&from_view=keyword
 
-Image by Needpix
-https://www.needpix.com/photo/1872103/cardiac-pulse-time-series-statistics-free-pictures-free-photos-free-images-royalty-free-free-illustrations
+Image by unsplash
+https://unsplash.com/photos/n6B49lTx7NM
+
+Image by analyticsinsight.net
+https://www.analyticsinsight.net/wp-content/uploads/2021/03/Data-Analytics.jpg
+
+Image by iknowfirst.com
+https://iknowfirst.com/iwf-iwd-stock-forecast-for-2022-growth-vs-value-in-the-pandemic-realities
