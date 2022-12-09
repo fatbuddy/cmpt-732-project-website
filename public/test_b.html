@@ -102,6 +102,22 @@
     </div>
     </div>
   </section>
+  <footer class="footer py-4 bg-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-4 text-lg-start">Copyright &copy; The Epic Byte 2022</div>
+            <div class="col-lg-4 my-3 my-lg-0">
+                <!-- <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a> -->
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <!-- <a class="link-dark text-decoration-none me-3" href="#!">Privacy Policy</a>
+                <a class="link-dark text-decoration-none" href="#!">Terms of Use</a> -->
+            </div>
+        </div>
+    </div>
+</footer>
 </body>
 
 <script>
@@ -181,12 +197,12 @@
     })
 
   }
-  function get_category_percent(){
-    if(data_size < 8) return data_size/5;
-    else return data_size/8;
+  function get_category_percent() {
+    if (data_size < 8) return data_size / 5;
+    else return data_size / 8;
   }
-  function get_bar_percent(){
-    if(data_size < 8) return 0.5;
+  function get_bar_percent() {
+    if (data_size < 8) return 0.5;
     else return 0.3;
   }
   function plotStack() {
@@ -266,7 +282,7 @@
         anchor: 'end',
         display: 'auto'
 
-      }
+      },
     },
     layout: {
       padding: {
@@ -277,7 +293,6 @@
       },
     }
   };
-
 
   function plotPie() {
     if (chart) chart.destroy();
@@ -294,7 +309,16 @@
         }],
       },
       options: pie_options,
-      plugins: [ChartDataLabels]
+      plugins: [ChartDataLabels, {
+        id: "legendMargin",
+        beforeInit(chart, legend, options) {
+          const fitValue = chart.legend.fit;
+          chart.legend.fit = function fit() {
+            fitValue.bind(chart.legend)();
+            return this.height += 20;
+          }
+        }
+      }]
     });
   }
 
