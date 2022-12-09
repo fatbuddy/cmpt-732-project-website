@@ -1,0 +1,313 @@
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>CMPT 732 Project Website - Part A-B Collisions over Catetories</title>
+    <!-- Favicon-->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <!-- Font Awesome icons (free version)-->
+    <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/styles.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="/js/bootstrap-datepicker.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0/chartjs-plugin-datalabels.min.js"
+        integrity="sha512-R/QOHLpV1Ggq22vfDAWYOaMd5RopHrJNMxi8/lJu8Oihwi4Ho4BRFeiMiCefn9rasajKjnx9/fTQ/xkWnkDACg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="/css/category.css" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body id="page-top">
+    <!-- Navigation-->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top navbar-shrink" id="mainNav">
+        <div class="container">
+            <a class="" href="/" style="text-decoration: none;font-weight: bold;font-size: 24px;"><img class="me-3"
+                    src="/android-chrome-192x192.png" style="height:50px;" alt="..." />Epic Byte</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                Menu
+                <i class="fas fa-bars ms-1"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="/#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/#services">Summary</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/#portfolio">Analysis</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/#team">Team</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <section class="page-section bg-light" id="point1">
+        <div class="container">
+            <h1>Category Info over Region</h1>
+            <div class="row mt-3 pb-3 justify-content-center" style="border-bottom: 1px solid #ced4da;">
+                <div class="col col-7 col-select">
+                    <div class="row mb-2">
+                        <div class="col col-6">
+                            <select id="option_feature" class="form-select" autocomplete="off">
+                                <option value="" selected="selected">Select Category</option>
+                                <option value="weather">Weather</option>
+                                <option value="road_condition">Road Conditoin</option>
+                                <option value="pcf_violation_category">PCF Violation Category</option>
+                                <option value="road_surface">Road Surface</option>
+                                <option value="lighting">Lighting</option>
+                                <option value="alcohol_involved">Alcohol Involved</option>
+                                <option value="party_sex">Party Sex</option>
+                                <option value="driver_age">Driver Age</option>
+                                <option value="party_race">Party Race</option>
+                                <option value="vehicle_make">Vehicle Make</option>
+                                <option value="vehicle_age">Vehicle Age</option>
+                            </select>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col col-6">
+                            <select class="option_county form-select" id="county_1">
+                                <option value="" selected="selected" autocomplete="off">Select County</option>
+                            </select>
+                        </div>
+                        <div class="col col-6">
+                            <select class="option_city county_1 form-select" id="city_1">
+                                <option value="" selected="selected" autocomplete="off">Select City</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col col-6">
+                            <select class="option_county form-select" id="county_2">
+                                <option value="" selected="selected" autocomplete="off">Select County</option>
+                            </select>
+
+                        </div>
+                        <div class="col col-6">
+                            <select class="option_city county_2 form-select" id="city_2">
+                                <option value="" selected="selected" autocomplete="off">Select City</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col col-6">
+                            <select class="option_county form-select" id="county_3">
+                                <option value="" selected="selected" autocomplete="off">Select County</option>
+                            </select>
+                        </div>
+                        <div class="col col-6">
+                            <select class="option_city county_3 form-select" id="city_3">
+                                <option value="" selected="selected" autocomplete="off">Select City</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div id="chart-wrapper">
+                    <canvas id="my-chart"></canvas>
+                </div>
+            </div>
+        </div>
+        </div>
+        </div>
+    </section>
+</body>
+
+<script>
+    const ctx = document.getElementById('my-chart');
+    const feature = document.getElementById("option_feature");
+
+    var labels = {}
+    var chart;
+    var cities;
+    var dataset_data;
+    var dataset_data_label;
+    var category_values;
+    var lineChartData;
+    var stackChartData;
+    var selected_cities = {};
+    var data_labels;
+    var city_id_name = {};
+    var colors = ["#003f5c", "#2f4b7c", "#665191", "#a05195", "#d45087", "#f95d6a", "#ff7c43",
+        "#ffa600", "#de425b", "#488f31"];
+
+    function init_data() {
+        dataset_data = {};
+        data_labels = [];
+    }
+
+    function reset_dataset() {
+        lineChartData =
+        {
+            type: 'line',
+            data: {
+                datasets: [],
+                spanGaps: true
+            }
+        };
+        stackChartData =
+        {
+            type: 'bar',
+            data: {
+                datasets: []
+            },
+            options: {
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Chart.js Bar Chart - Stacked'
+                    },
+                },
+                responsive: true,
+                scales: {
+                    x: {
+                        stacked: true,
+                    },
+                    y: {
+                        stacked: true
+                    }
+                }
+            }
+        };
+
+    }
+
+    function loadData(url, city_class) {
+        fetch(url).then(function (response) {
+            return response.json();
+        }).then(function (data) {
+            if (data.success) {
+                data = data.payload;
+                let keys = Object.keys(data[0]);
+                curr_feature = keys[1];
+                for (i in data) {
+                    d = data[i];
+                    feature_val = d[curr_feature];
+                    percent = d["percent"];
+                    collisions = d["num_collisions"];
+                    year = d['year'];
+                    county = d['county_ID'].toString();
+                    city = d['city_ID'].toString();
+                    if (county.length == 1) {
+                        county = "0" + county;
+                    }
+                    if (city.length == 1) {
+                        city = "0" + city;
+                    }
+                    county_city = "" + county + city;
+                    city_name = labels[city_class][county_city];
+                    if (Object.keys(city_id_name).indexOf(city_class) === -1) city_id_name[city_class] = ""
+                    city_id_name[city_class] = city_name
+
+                    if (!dataset_data[feature.value]) dataset_data[feature.value] = {}
+                    if (!dataset_data[feature.value][feature_val]) dataset_data[feature.value][feature_val] = {};
+                    if (!dataset_data[feature.value][feature_val][city_class]) dataset_data[feature.value][feature_val][city_class] = []
+                    dataset_data[feature.value][feature_val][city_class] = percent
+                    if (data_labels.indexOf(city_class) === -1) data_labels.push(city_class);
+
+                }
+                plotStack(city_class);
+            }
+        })
+    }
+
+    function get_dataset(city_class) {
+        city_name_label = data_labels.map(a => city_id_name[a])
+        stackChartData.labels = city_name_label
+        stackChartData.data.labels = city_name_label
+        var index = 0
+        for (const [key, value] of Object.entries(dataset_data[feature.value])) {
+            stackChartData.data.datasets.push({
+                label: key,
+                data: Object.values(value),
+                backgroundColor: colors[index]
+            })
+            index++;
+        }
+        stackChartData.options.categoryPercentage = data_labels.length / 5,
+            stackChartData.options.barPercentage = 0.5
+
+    }
+
+    function plotStack(city_class) {
+        if (chart) chart.destroy();
+        reset_dataset();
+        get_dataset(city_class);
+        chart = new Chart(ctx, stackChartData);
+    }
+
+    $("#option_feature").change(function () {
+        var selected_cities = []
+        var selected_counties = []
+        data_labels = []
+        $(".option_city").each(function () {
+            if ($(this).find("option:selected").val() !== "") {
+                temp_city = parseInt($(this).find("option:selected").val());
+                temp_class = $(this).attr("class").split(' ')[1];
+                temp_county = parseInt($("#" + temp_class)[0].value);
+                var url = "/categoryRegion?category_name=" + feature.value +
+                    "&county_id=" + temp_county + "&city_id=" + temp_city;
+                loadData(url, temp_class);
+            }
+        })
+    })
+
+    $(".option_county").change(function () {
+        var selected_county = $(this).find("option:selected").val()
+        var select_cities = cities.filter(option => option.county_ID == selected_county);
+        var changed_id = $(this).attr("id");
+        $("." + changed_id).find('option').not(':first').remove();
+        for (i in select_cities) {
+            city_name = select_cities[i].city;
+            city_name = city_name.charAt(0) + city_name.substring(1).toLowerCase()
+            $("." + changed_id).append(new Option(city_name, select_cities[i].city_ID));
+        }
+    })
+
+
+    $(".option_city").change(function () {
+        var city_class = $(this).attr("class").split(' ')[1];
+        var curr_county = $("#" + city_class)[0].value;
+        var county_id = parseInt(curr_county);
+        var city_id = parseInt(this.value);
+        var city_name = $("option:selected", this).text()
+        labels[city_class] = [curr_county + this.value, city_name];
+        labels[city_class] = {};
+        labels[city_class][curr_county + this.value] = city_name;
+        var url = "/categoryRegion?category_name=" + feature.value +
+            "&county_id=" + county_id + "&city_id=" + city_id;
+        loadData(url, city_class)
+    })
+
+    window.onload = function () {
+        init_data();
+        reset_dataset();
+        fetch("/city_compact.json").then(function (response) {
+            return response.json();
+        }).then(function (data) {
+            var counties = data.items.filter(option => option.city_ID == 'All');
+            cities = data.items.filter(option => option.city_ID != 'All');
+            for (var i = 0; i < counties.length; i++) {
+                $(".option_county").each(function () {
+                    county_name = counties[i].county;
+                    county_name = county_name.charAt(0) + county_name.substring(1).toLowerCase()
+                    $(this).append(new Option(county_name, counties[i].county_ID));
+                })
+            }
+        }).catch(function (err) {
+            console.log("Booo", err);
+        });
+    }
+</script>
