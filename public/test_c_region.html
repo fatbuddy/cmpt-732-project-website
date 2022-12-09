@@ -254,8 +254,8 @@
         data_labels = []
         $(".option_city").each(function () {
             if ($(this).find("option:selected").val() !== "") {
-                temp_city = $(this).find("option:selected").val();
-                temp_class = parseInt($(this).attr("class").split(' ')[1]);
+                temp_city = parseInt($(this).find("option:selected").val());
+                temp_class = $(this).attr("class").split(' ')[1];
                 temp_county = parseInt($("#" + temp_class)[0].value);
                 var url = "/categoryRegion?category_name=" + feature.value +
                     "&county_id=" + temp_county + "&city_id=" + temp_city;
