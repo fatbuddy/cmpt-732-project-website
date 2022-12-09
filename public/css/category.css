@@ -1,0 +1,17 @@
+
+#chart-wrapper {
+    display: inline-block;
+    position: relative;
+    height: 500px;
+    width: 100%;
+    text-align:center;
+}
+h1 {text-align: center;}
+canvas{
+    margin: 0 auto;
+    display: inline-block;
+    position: relative;
+    height: 800px;
+    width: 100%;
+    text-align:center;
+    }

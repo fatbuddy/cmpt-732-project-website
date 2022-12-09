@@ -1,0 +1,358 @@
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <title>CMPT 732 Project Website - Part A-B Collisions over Catetories</title>
+  <!-- Favicon-->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <!-- Font Awesome icons (free version)-->
+  <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+  <!-- Google fonts-->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
+  <!-- Core theme CSS (includes Bootstrap)-->
+  <link href="css/styles.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="/js/bootstrap-datepicker.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0/chartjs-plugin-datalabels.min.js"
+    integrity="sha512-R/QOHLpV1Ggq22vfDAWYOaMd5RopHrJNMxi8/lJu8Oihwi4Ho4BRFeiMiCefn9rasajKjnx9/fTQ/xkWnkDACg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <link href="/css/category.css" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body id="page-top">
+  <!-- Navigation-->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top navbar-shrink" id="mainNav">
+    <div class="container">
+      <a class="" href="/" style="text-decoration: none;font-weight: bold;font-size: 24px;"><img class="me-3"
+          src="/android-chrome-192x192.png" style="height:50px;" alt="..." />Epic Byte</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive"
+        aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars ms-1"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
+          <li class="nav-item"><a class="nav-link" href="/#about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="/#services">Summary</a></li>
+          <li class="nav-item"><a class="nav-link" href="/#portfolio">Analysis</a></li>
+          <li class="nav-item"><a class="nav-link" href="/#team">Team</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <section class="page-section bg-light" id="point1">
+    <div class="container">
+      <h1>Category Chart</h1>
+      <div class="row mt-3 pb-3 justify-content-center" style="border-bottom: 1px solid #ced4da;">
+        <div class="col col-7 col-select">
+          <div class="row mb-2">
+            <div class="col-md-6 brd">
+              <select id="option_feature" class="form-select" autocomplete="off">
+                <option value="" selected="selected">Select Category</option>
+                <option value="day_of_week">Day of Week</option>
+                <option value="day_or_night">Day or Night</option>
+                <option value="season">Season</option>
+                <option value="hour">Hour</option>
+                <option value="month">Month</option>
+                <option value="year">Year</option>
+                <option value="holiday">Holiday</option>
+                <option value="weather">Weather</option>
+                <option value="road_condition">Road Conditoin</option>
+                <option value="pcf_violation_category">PCF Violation Category</option>
+                <option value="road_surface">Road Surface</option>
+                <option value="lighting">Lighting</option>
+                <option value="alcohol_involved">Alcohol Involved</option>
+                <option value="party_sex">Party Sex</option>
+                <option value="driver_age">Driver Age</option>
+                <option value="party_race">Party Race</option>
+                <option value="vehicle_make">Vehicle Make</option>
+                <option value="vehicle_age">Vehicle Age</option>
+              </select>
+            </div>
+            <div class="col col-6 btn-group btn-group-toggle" data-toggle="buttons">
+              <label class="btn btn-secondary active">
+                <input type="radio" name="chart-type" onclick="plotPie()" value="pie" autocomplete="off" checked> Pie
+              </label>
+              <label class="btn btn-secondary">
+                <input type="radio" name="chart-type" onclick="plotStack()" value="stack" autocomplete="off"> Stack
+              </label>
+              <label class="btn btn-secondary">
+                <input type="radio" name="chart-type" onclick="plotPercentStack()" value="percent" autocomplete="off">
+                Percent Stack
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div id="chart-wrapper">
+          <canvas id="my-chart"></canvas>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+</body>
+
+<script>
+  const ctx = document.getElementById('my-chart');
+  var labels;
+  var chart;
+  var dataset_label = ["other injury", "fatal", "severe injury", "pain", "property damage only"];
+  var dataset_data;
+  var dataset_data_percent;
+  var data_size;
+  var day_label = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  var season_label = ["spring", "summer", "autumn", "winter"];
+  var age_label = ["less than 20", "20 - 30", "30 - 40", "40 - 50", "50 - 60", "60 - 70", "more than 70"];
+  function init_data() {
+    dataset_data = [];
+    dataset_data_percent = [];
+    dataset_total = [];
+    labels = [];
+    data_size = 0;
+  }
+
+  function loadData(url) {
+    fetch(url).then(function (response) {
+      return response.json();
+    }).then(function (data) {
+      if (data.success) {
+        init_data();
+        data = data.payload;
+        let keys = Object.keys(data[0]);
+        feature = keys[0];
+        for (i in data) {
+          d = data[i];
+          feature_val = d[feature];
+          severity = d["collision_severity"];
+          percent = d["percent"];
+          collisions = d["num_collisions"];
+          var index = -1;
+          // place the label in the right position
+          if (day_label.includes(feature_val)) {
+            index = day_label.indexOf(feature_val);
+            if (index !== -1 & (labels.indexOf(feature_val) === -1)) {
+              labels[index] = (feature_val);
+            }
+          }
+          else if (season_label.includes(feature_val)) {
+            index = season_label.indexOf(feature_val);
+            if (index !== -1 & (labels.indexOf(feature_val) === -1)) {
+              labels[index] = (feature_val);
+            }
+          }
+          else if (age_label.includes(feature_val)) {
+            index = age_label.indexOf(feature_val);
+            if (index !== -1 & (labels.indexOf(feature_val) === -1)) {
+              labels[index] = (feature_val);
+            }
+          }
+          else if ((labels.indexOf(feature_val) === -1)) {
+            labels.push(feature_val);
+          }
+
+          if (!dataset_data[severity]) dataset_data[severity] = []
+          dataset_data[severity].push(collisions)
+          if (!dataset_data_percent[severity]) dataset_data_percent[severity] = []
+          dataset_data_percent[severity].push(percent)
+          if (!dataset_total[feature_val]) dataset_total[feature_val] = 0
+          dataset_total[feature_val] += collisions;
+
+        }
+        // set bar width
+        data_size = labels.length;
+
+      }
+      var chart_type = $('input[name="chart-type"]:checked').val();
+      if (chart_type === "pie") plotPie()
+      else if (chart_type == "stack") plotStack()
+      else plotPercentStack()
+    })
+
+  }
+  function get_category_percent(){
+    if(data_size < 8) return data_size/5;
+    else return data_size/8;
+  }
+  function get_bar_percent(){
+    if(data_size < 8) return 0.5;
+    else return 0.3;
+  }
+  function plotStack() {
+    if (chart) chart.destroy();
+    chart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: labels,
+        datasets: [{
+          label: "property damage only",
+          backgroundColor: "#374c80",
+          data: dataset_data["property damage only"],
+        }, {
+          label: "pain",
+          backgroundColor: "#7a5195",
+          data: dataset_data["pain"],
+        }, {
+          label: "other injury",
+          backgroundColor: "#bc5090",
+          data: dataset_data["other injury"],
+        }, {
+          label: "severe injury",
+          backgroundColor: "#ef5675",
+          data: dataset_data["severe injury"],
+        }, {
+          label: "fatal",
+          backgroundColor: "#93003a",
+          data: dataset_data["fatal"],
+        }],
+      },
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: 'Stack Chart for Accidient Severity'
+          },
+        },
+        responsive: true,
+        scales: {
+          x: {
+            stacked: true
+          },
+          y: {
+            stacked: true
+          }
+        },
+        categoryPercentage: get_category_percent(),
+        barPercentage: get_bar_percent(),
+      }
+    });
+  }
+
+  var pie_options = {
+    plugins: {
+      title: {
+        display: true,
+        text: 'Pie Chart for Number of Accidients'
+      },
+      legend: {
+        position: "top",
+        align: "start"
+      },
+      tooltips: {
+        enabled: false
+      },
+      datalabels: {
+        formatter: (value, context) => {
+          let sum = 0;
+          let dataArr = context.chart.data.datasets[0].data;
+          dataArr.map(data => {
+            sum += data;
+          });
+          let percentage = (value * 100 / sum).toFixed(2) + "%";
+          return percentage;
+        },
+        align: 'end',
+        anchor: 'end',
+        display: 'auto'
+
+      }
+    },
+    layout: {
+      padding: {
+        left: 0,
+        right: 0,
+        top: 50,
+        bottom: 50
+      },
+    }
+  };
+
+
+  function plotPie() {
+    if (chart) chart.destroy();
+    var dataset_total_lst = Object.values(dataset_total);
+    const reducer = (accumulator, currentValue) => accumulator + currentValue;
+    var total = dataset_total_lst.reduce(reducer);
+
+    chart = new Chart(ctx, {
+      type: "doughnut",
+      data: {
+        labels: labels,
+        datasets: [{
+          data: dataset_total_lst
+        }],
+      },
+      options: pie_options,
+      plugins: [ChartDataLabels]
+    });
+  }
+
+  function plotPercentStack() {
+    if (chart) chart.destroy();
+    chart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: labels,
+        datasets: [{
+          label: "property damage only",
+          backgroundColor: "#374c80",
+          data: dataset_data_percent["property damage only"],
+        }, {
+          label: "pain",
+          backgroundColor: "#7a5195",
+          data: dataset_data_percent["pain"],
+        }, {
+          label: "other injury",
+          backgroundColor: "#bc5090",
+          data: dataset_data_percent["other injury"],
+        }, {
+          label: "severe injury",
+          backgroundColor: "#ef5675",
+          data: dataset_data_percent["severe injury"],
+        }, {
+          label: "fatal",
+          backgroundColor: "#93003a",
+          data: dataset_data_percent["fatal"],
+        }]
+      },
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: 'Stack Chart on Accidient Severity Percentage'
+          },
+        },
+        responsive: true,
+        scales: {
+          x: {
+            stacked: true,
+          },
+          y: {
+            stacked: true
+          }
+        },
+        categoryPercentage: get_category_percent(),
+        barPercentage: get_bar_percent(),
+      }
+    });
+  }
+
+  $(window).load(function () {
+    const feature = document.getElementById('option_feature');
+    feature.onchange = function () {
+      var url = "/categories?category_name=" + feature.value;
+      loadData(url);
+    }
+  })
+</script>
