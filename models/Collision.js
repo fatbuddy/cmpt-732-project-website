@@ -14,21 +14,14 @@ Collision.findAll = (db, frequency, city_id, county_id, start, end, result) => {
         result({error: "not_found"}, null);
     }
     const table_name = "collisions_" + frequency;
-    const query = "SELECT * FROM "+table_name+" where city_id = ? and county_id = ? and collision_"+words_convert[frequency]+" between ? and ? order by "+"collision_"+words_convert[frequency]+" limit 30"
+    const query = "SELECT * FROM "+table_name+" where city_id = ? and county_id = ? and collision_"+words_convert[frequency]+" between ? and ? order by "+"collision_"+words_convert[frequency]+" limit 1000"
     db.execute(query, [city_id, county_id, start, end], (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(null, err);
             return;
           }
-    
-          if (res.length == 0) {
-            // not found Tutorial with the id
-            result({ kind: "not_found" }, null);
-            return;
-          }
-    
-          // console.log("loaded vote: ", res);
+
           result(null, res);
     });
   }
