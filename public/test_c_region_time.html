@@ -201,7 +201,7 @@
             if (data.success) {
                 data = data.payload;
                 let keys = Object.keys(data[0]);
-                curr_feature = keys[0];
+                curr_feature = keys[1];
                 // clear the existing data
                 if (dataset_data[city_class]) dataset_data[city_class] = {};
                 for (i in data) {
@@ -325,9 +325,9 @@
         var selected_counties = []
         $(".option_city").each(function () {
             if ($(this).find("option:selected").val() !== "") {
-                temp_city = $(this).find("option:selected").val();
+                temp_city = parseInt($(this).find("option:selected").val());
                 temp_class = $(this).attr("class").split(' ')[1];
-                temp_county = $("#" + temp_class)[0].value;
+                temp_county = parseInt($("#" + temp_class)[0].value);
                 var url = "/categoryRegionTime?category_name=" + feature.value +
                     "&county_id=" + temp_county + "&city_id=" + temp_city;
                 loadData(url, temp_class);

@@ -125,7 +125,6 @@
     </section>
 </body>
 
-
 <script>
     const ctx = document.getElementById('my-chart');
     const feature = document.getElementById("option_feature");
@@ -192,7 +191,7 @@
             if (data.success) {
                 data = data.payload;
                 let keys = Object.keys(data[0]);
-                curr_feature = keys[0];
+                curr_feature = keys[1];
                 for (i in data) {
                     d = data[i];
                     feature_val = d[curr_feature];
@@ -256,8 +255,8 @@
         $(".option_city").each(function () {
             if ($(this).find("option:selected").val() !== "") {
                 temp_city = $(this).find("option:selected").val();
-                temp_class = $(this).attr("class").split(' ')[1];
-                temp_county = $("#" + temp_class)[0].value;
+                temp_class = parseInt($(this).attr("class").split(' ')[1]);
+                temp_county = parseInt($("#" + temp_class)[0].value);
                 var url = "/categoryRegion?category_name=" + feature.value +
                     "&county_id=" + temp_county + "&city_id=" + temp_city;
                 loadData(url, temp_class);
