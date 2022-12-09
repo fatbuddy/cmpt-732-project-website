@@ -5,3 +5,11 @@
 .portfolio-caption-heading a {
     color: #212529;
 }
+
+.portfolio-caption-heading a {
+    text-decoration: none;
+}
+
+.portfolio-caption-heading a:hover {
+    text-decoration: underline;
+}
