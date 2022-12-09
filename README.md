@@ -74,3 +74,6 @@ https://www.analyticsinsight.net/wp-content/uploads/2021/03/Data-Analytics.jpg
 
 Image by iknowfirst.com
 https://iknowfirst.com/iwf-iwd-stock-forecast-for-2022-growth-vs-value-in-the-pandemic-realities
+
+Chart Vectors by Vecteezy
+https://www.vecteezy.com/free-vector/chart
